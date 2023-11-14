@@ -7,9 +7,9 @@ const routes = [
     component: () => import("@/layouts/default/Default.vue"),
     children: [
       {
-        path: "",
+        path: "/list-deltai",
         name: "Home",
-        component: () => import("@/views/Home.vue"),
+        component: () => import("@/views/details/ListDetail.vue"),
       },
     ],
   },
