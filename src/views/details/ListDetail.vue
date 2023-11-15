@@ -1,106 +1,115 @@
 <template>
-  <v-card flat>
-    <v-card-title class="d-flex align-center pe-2">
-      <v-icon icon="mdi-video-input-component"></v-icon> &nbsp; Quản lý chi tiết
-      sách
+  <h1>Quản lý chi tiết sách</h1>
 
-      <v-spacer></v-spacer>
+  <div class="d-flex align-center flex-column pa-6">
+    <v-card width="99%">
+      <v-table hover>
+        <thead>
+          <tr>
+            <th class="text-left">Tên Sách</th>
+            <th class="text-left">Ảnh</th>
+            <th class="text-left">Giá</th>
+            <th class="text-left">Tên Tác Giả</th>
+            <th class="text-left">Quốc Gia</th>
+            <th class="text-left">Thể Loại</th>
+            <th class="text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in desserts" :key="item.name">
+            <td class="text-left">{{ item.name }}</td>
+            <td @click="console.log(item.image)">
+              <v-img
+                :src="`https://cdn.vuetifyjs.com/docs/images/graphics/gpus/${item.image}`"
+              ></v-img>
+            </td>
 
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="mdi-magnify"
-        density="compact"
-        label="Search"
-        single-line
-        flat
-        hide-details
-        variant="solo-filled"
-      ></v-text-field>
-    </v-card-title>
+            <td class="text-left">{{ item.price }}</td>
+            <td class="text-left">{{ item.author }}</td>
+            <td class="text-left">{{ item.country }}</td>
+            <td class="text-left">{{ item.type }}</td>
+            <td>
+              <v-card-actions>
+                <v-icon variant="text" @click="close"> mdi-pencil </v-icon>
 
-    <v-divider></v-divider>
-    <v-data-table v-model:search="search" :items="items">
-      <template v-slot:header.stock>
-        <div class="text-end">Stock</div>
-      </template>
+                <v-icon variant="text" @click="save"> mdi-delete </v-icon>
+              </v-card-actions>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
 
-      <template v-slot:item.image="{ item }">
-        <v-card class="my-2" elevation="2" rounded>
-          <v-img
-            :src="`https://cdn.vuetifyjs.com/docs/images/graphics/gpus/${item.image}`"
-            height="64"
-            cover
-          ></v-img>
-        </v-card>
-      </template>
-
-      <template v-slot:item.rating="{ item }">
-        <v-rating
-          :model-value="item.rating"
-          color="orange-darken-2"
-          density="compact"
-          size="small"
-          readonly
-        ></v-rating>
-      </template>
-
-      <template v-slot:item.stock="{ item }">
-        <div class="text-end">
-          <v-chip
-            :color="item.stock ? 'green' : 'red'"
-            :text="item.stock ? 'In stock' : 'Out of stock'"
-            class="text-uppercase"
-            label
-            size="small"
-          ></v-chip>
-        </div>
-      </template>
-    </v-data-table>
-  </v-card>
+      <v-pagination v-model="page" :length="pageCount"> </v-pagination>
+    </v-card>
+  </div>
 </template>
-<script>
-export default {
-  data() {
-    return {
-      search: "",
-      items: [
-        {
-          name: "Nebula GTX 3080",
-          image: "1.png",
-          price: 699.99,
-          rating: 5,
-          stock: true,
-        },
-        {
-          name: "Galaxy RTX 3080",
-          image: "2.png",
-          price: 799.99,
-          rating: 4,
-          stock: false,
-        },
-        {
-          name: "Orion RX 6800 XT",
-          image: "3.png",
-          price: 649.99,
-          rating: 3,
-          stock: true,
-        },
-        {
-          name: "Vortex RTX 3090",
-          image: "4.png",
-          price: 1499.99,
-          rating: 4,
-          stock: true,
-        },
-        {
-          name: "Cosmos GTX 1660 Super",
-          image: "5.png",
-          price: 299.99,
-          rating: 4,
-          stock: false,
-        },
-      ],
-    };
+
+<script setup>
+import { ref } from "vue";
+const page = ref(1);
+const pageCount = ref(8);
+
+const desserts = ref([
+  {
+    name: "Nebula GTX 3080",
+    image: "1.png",
+    price: 699.99,
+    author: "Tùng Tinh Tướng",
+    country: "Viet Nam",
+    type: "Hài Kịnh",
   },
-};
+  {
+    name: "Galaxy RTX 3080",
+    image: "2.png",
+    price: 799.99,
+    author: "Linh Lụa",
+    country: "Nhật Bản",
+    type: "Lãng Xẹt",
+  },
+  {
+    name: "Orion RX 6800 XT",
+    image: "3.png",
+    price: 799.99,
+    author: "Giang jj đó",
+    country: "Đức",
+    type: "Kinh Dị",
+  },
+  {
+    name: "Vortex RTX 3090",
+    image: "4.png",
+    price: 1499.99,
+    author: "Thành dz",
+    country: "Anh Quốc",
+    type: "Trinh Thám",
+  },
+  {
+    name: "Cosmos GTX 1660 Super",
+    image: "5.png",
+    price: 299.99,
+    author: "Long Xing Gái",
+    country: "Hàn Xẻng",
+    type: "Tiểu Thuyết",
+  },
+]);
 </script>
+
+<style lang="scss">
+#app {
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+nav {
+  a {
+    text-decoration: none;
+    color: #ffffff;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
+}
+</style>

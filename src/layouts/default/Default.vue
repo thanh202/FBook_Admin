@@ -24,7 +24,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/book-category">
           <v-list-item
             prepend-icon="mdi-book-open"
             @click="console.log('clicked')"
@@ -36,7 +36,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/list-user">
           <v-list-item
             prepend-icon="mdi-account-group"
             @click="console.log('clicked')"

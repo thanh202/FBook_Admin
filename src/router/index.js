@@ -11,6 +11,14 @@ const routes = [
         name: "Home",
         component: () => import("@/views/details/ListDetail.vue"),
       },
+      {
+        path: "/book-category",
+        component: () => import("@/views/category/BookCategory.vue"),
+      },
+      {
+        path: "/list-user",
+        component: () => import("@/views/users/ListUser.vue"),
+      },
     ],
   },
   {
