@@ -23,16 +23,78 @@
           </v-list-item>
         </router-link>
       </v-list>
-      <template v-slot:append>
-        <div class="pa-0">
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
           <v-list-item
-            prepend-icon="mdi-logout"
+            prepend-icon="mdi-book-open"
             @click="console.log('clicked')"
           >
-            <v-list-item-title style="margin-right: 40px"
-              >Đăng Xuất</v-list-item-title
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý loại sách</v-list-item-title
             >
           </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
+          <v-list-item
+            prepend-icon="mdi-account-group"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý thông tin user</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
+          <v-list-item
+            prepend-icon="mdi-calendar-range"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý hóa đơn</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
+          <v-list-item
+            prepend-icon="mdi-message-badge-outline"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý thông báo</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
+          <v-list-item
+            prepend-icon="mdi-clipboard-text-clock"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Lịch sử giao dịch</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <template v-slot:append>
+        <div class="pa-0">
+          <router-link to="/">
+            <v-list-item
+              prepend-icon="mdi-logout"
+              @click="console.log('clicked')"
+            >
+              <v-list-item-title style="margin-right: 40px"
+                >Đăng Xuất</v-list-item-title
+              >
+            </v-list-item>
+          </router-link>
         </div>
       </template>
     </v-navigation-drawer>
