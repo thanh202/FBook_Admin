@@ -28,7 +28,7 @@ Qlctbook
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Tên Sách"
+                      label="Nhập Tên"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -39,26 +39,20 @@ Qlctbook
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.price"
-                      label="Giá Tiền"
+                      v-model="editedItem.age"
+                      label="Nhập Tuổi"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.author"
-                      label="Tên Tác Giả"
+                      v-model="editedItem.phone"
+                      label="Nhập SDT"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.country"
-                      label="Quốc Gia"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.type"
-                      label="Thể Loại"
+                      v-model="editedItem.gmail"
+                      label="Nhap Gmail"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -116,16 +110,15 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        title: "Tên Đầu Sách",
+        title: "Tên Người Dùng",
         align: "start",
         sortable: false,
         key: "name",
       },
       { title: "Ảnh", key: "image" },
-      { title: "Giá", key: "price" },
-      { title: "Tên Tác Giả", key: "author" },
-      { title: "Quốc Gia", key: "country" },
-      { title: "Thể Loại", key: "type" },
+      { title: "Tuổi", key: "age" },
+      { title: "Số Điện Thoại", key: "phone" },
+      { title: "Gmail", key: "gmail" },
       { title: "Actions", key: "actions", sortable: false },
     ],
     desserts: [],
@@ -133,18 +126,16 @@ export default {
     editedItem: {
       name: "",
       image: "",
-      price: "",
-      author: "",
-      country: "",
-      type: "",
+      age: "",
+      phone: "",
+      gmail: "",
     },
     defaultItem: {
       name: "",
       image: "",
-      price: "",
-      author: "",
-      country: "",
-      type: "",
+      age: "",
+      phone: "",
+      gmail: "",
     },
   }),
 
@@ -171,36 +162,11 @@ export default {
     initialize() {
       this.desserts = [
         {
-          name: "Truyện Kiều",
+          name: "Long Xing Gái",
           image: "1",
-          price: 699.99,
-          author: "Nguyễn Du",
-          country: "Việt Nam",
-          type: "Tiểu Thuyết",
-        },
-        {
-          name: "Truyện Kiều",
-          image: "1.png",
-          price: 699.99,
-          author: "Nguyễn Du",
-          country: "Việt Nam",
-          type: "Tiểu Thuyết",
-        },
-        {
-          name: "Truyện Kiều",
-          image: "1,png",
-          price: 699.99,
-          author: "Nguyễn Du",
-          country: "Việt Nam",
-          type: "Tiểu Thuyết",
-        },
-        {
-          name: "Truyện Kiều",
-          image: "1.png",
-          price: 699.99,
-          author: "Nguyễn Du",
-          country: "Việt Nam",
-          type: "Tiểu Thuyết",
+          age: 16,
+          phone: "0987236361",
+          gmail: "longxinggai@gmail.com",
         },
       ];
     },

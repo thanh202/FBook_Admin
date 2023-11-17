@@ -1,5 +1,8 @@
 <template>
   <h1>Quản lý chi tiết sách</h1>
+  <div class="d-flex align-center ma-6" style="flex-direction: row-reverse">
+    <v-btn color="primary" dark> Thêm Sách </v-btn>
+  </div>
 
   <div class="d-flex align-center flex-column pa-6">
     <v-card width="99%">
