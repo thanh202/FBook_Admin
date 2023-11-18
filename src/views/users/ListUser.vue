@@ -168,6 +168,20 @@ export default {
           phone: "0987236361",
           gmail: "longxinggai@gmail.com",
         },
+        {
+          name: "Long Xing Gái",
+          image: "1",
+          age: 16,
+          phone: "0987236361",
+          gmail: "longxinggai@gmail.com",
+        },
+        {
+          name: "Long Xing Gái",
+          image: "1",
+          age: 16,
+          phone: "0987236361",
+          gmail: "longxinggai@gmail.com",
+        },
       ];
     },
 
