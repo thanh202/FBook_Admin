@@ -19,6 +19,10 @@ const routes = [
         path: "/list-user",
         component: () => import("@/views/users/ListUser.vue"),
       },
+      {
+        path: "/transactions",
+        component: () => import("@/views/history/Transaction_history.vue"),
+      },
     ],
   },
   {

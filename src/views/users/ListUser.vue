@@ -8,13 +8,13 @@ Qlctbook
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Quản lý thông tin người dừng</v-toolbar-title>
+        <v-toolbar-title>Quản lý thông tin người dùng</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ props }">
             <v-btn color="primary" dark class="mb-2" v-bind="props">
-              New Item
+              Thêm mới
             </v-btn>
           </template>
           <v-card>

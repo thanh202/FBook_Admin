@@ -72,7 +72,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/transactions">
           <v-list-item
             prepend-icon="mdi-clipboard-text-clock"
             @click="console.log('clicked')"
