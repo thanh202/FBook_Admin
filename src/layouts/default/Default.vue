@@ -48,7 +48,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/invoices">
           <v-list-item
             prepend-icon="mdi-calendar-range"
             @click="console.log('clicked')"

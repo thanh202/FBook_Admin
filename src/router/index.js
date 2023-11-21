@@ -20,6 +20,10 @@ const routes = [
         component: () => import("@/views/users/ListUser.vue"),
       },
       {
+        path: "/invoices",
+        component: () => import("@/views/invoice/Invoice_manager.vue"),
+      },
+      {
         path: "/transactions",
         component: () => import("@/views/history/Transaction_history.vue"),
       },
