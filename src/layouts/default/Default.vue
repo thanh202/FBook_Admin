@@ -48,7 +48,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/bill">
           <v-list-item
             prepend-icon="mdi-calendar-range"
             @click="console.log('clicked')"
@@ -60,7 +60,7 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/a">
           <v-list-item
             prepend-icon="mdi-message-badge-outline"
             @click="console.log('clicked')"
@@ -72,13 +72,13 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
-        <router-link to="/aaa">
+        <router-link to="/thongke">
           <v-list-item
             prepend-icon="mdi-clipboard-text-clock"
             @click="console.log('clicked')"
           >
             <v-list-item-title style="margin-left: 10px; font-weight: bold"
-              >Lịch sử giao dịch</v-list-item-title
+              >Thống Kê</v-list-item-title
             >
           </v-list-item>
         </router-link>
