@@ -14,7 +14,7 @@
       <v-list nav class="text-start">
         <router-link to="/list-deltai">
           <v-list-item
-            prepend-icon="mdi-archive"
+            prepend-icon="mdi-bookmark-box"
             @click="console.log('clicked')"
           >
             <v-list-item-title style="margin-left: 10px; font-weight: bold"
@@ -48,7 +48,9 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
+
         <router-link to="/bill">
+
           <v-list-item
             prepend-icon="mdi-calendar-range"
             @click="console.log('clicked')"
@@ -72,9 +74,23 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
+
         <router-link to="/thongke">
+
           <v-list-item
             prepend-icon="mdi-clipboard-text-clock"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Thống Kê</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
+        <router-link to="/aaa">
+          <v-list-item
+            prepend-icon="mdi-calendar-text"
             @click="console.log('clicked')"
           >
             <v-list-item-title style="margin-left: 10px; font-weight: bold"
