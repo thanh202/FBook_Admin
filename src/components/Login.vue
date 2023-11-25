@@ -15,6 +15,7 @@
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
       <v-text-field
+        v-model="email"
         density="compact"
         placeholder="Email address"
         prepend-inner-icon="mdi-email-outline"
@@ -37,6 +38,7 @@
       </div>
 
       <v-text-field
+        v-model="password"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
         density="compact"
@@ -45,16 +47,64 @@
         variant="outlined"
         @click:append-inner="visible = !visible"
       ></v-text-field>
-      <router-link to="/admin">
+      <!-- <router-link to="/admin">
         <v-btn block class="mb-8" color="blue" size="large"> Log In </v-btn>
-      </router-link>
+      </router-link> -->
+      <v-btn block class="mb-8" color="blue" size="large" @click="login">
+        Log In
+      </v-btn>
     </v-card>
+    <v-alert v-if="loginError" type="error">
+      {{ loginError }}
+    </v-alert>
   </div>
 </template>
+
 <script>
+import axios from "axios";
+
 export default {
   data: () => ({
     visible: false,
+    email: "",
+    password: "",
+    loginError: null,
   }),
+  methods: {
+    async login() {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/acount/login_admin",
+          {
+            Email: this.email,
+            PassWord: this.password,
+          }
+        );
+        console.log("Server response:", response.data);
+        if (response.data.status) {
+          const token = response.data.result;
+          localStorage.setItem("token", token);
+
+          // Thêm token vào các yêu cầu sau này
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+          const storedToken = localStorage.getItem("token");
+          if (storedToken) {
+            console.log("Đăng nhập thành công");
+            console.log("Token:", response.data.result);
+            this.$router.push("/admin");
+          } else {
+            console.error("Lỗi: Token không được lưu vào localStorage.");
+          }
+        } else {
+          this.loginError =
+            "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.";
+          console.log("Login failed:", response.data.result);
+        }
+      } catch (error) {
+        console.error("Error during login:", error.message);
+      }
+    },
+  },
 };
 </script>

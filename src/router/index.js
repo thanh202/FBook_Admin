@@ -20,12 +20,18 @@ const routes = [
         component: () => import("@/views/users/ListUser.vue"),
       },
       {
-        path: "/invoices",
-        component: () => import("@/views/invoice/Invoice_manager.vue"),
+
+        path: "/list-admin",
+        component: () => import("@/views/Adminss/admina.vue"),
       },
       {
-        path: "/transactions",
-        component: () => import("@/views/history/Transaction_history.vue"),
+        path: "/thongke",
+        component: () => import("@/views/Thongke/Thongke.vue"),
+      },
+      {
+        path: "/bill",
+        component: () => import("@/views/invoice/Invoice_manager.vue"),
+
       },
     ],
   },
