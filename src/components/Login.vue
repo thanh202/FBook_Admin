@@ -3,7 +3,7 @@
     <v-img
       class="mx-auto my-15"
       max-width="228"
-      src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"
+      src="/public/logo Fbook.png"
     ></v-img>
 
     <v-card
@@ -92,7 +92,7 @@ export default {
           if (storedToken) {
             console.log("Đăng nhập thành công");
             console.log("Token:", response.data.result);
-            this.$router.push("/admin");
+            this.$router.push("/list-deltai");
           } else {
             console.error("Lỗi: Token không được lưu vào localStorage.");
           }

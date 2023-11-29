@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Thống kê doanh số bán hàng theo tháng</h1>
+    <h1>Thống kê doanh thu</h1>
 
     <v-row>
       <v-col>
@@ -50,10 +50,19 @@ export default {
             pointRadius: 4,
             pointBackgroundColor: "rgba(75, 192, 192, 1)",
           },
+          {
+            label: "Số lượng",
+            data: [],
+            fill: false,
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: "rgba(255, 99, 132, 1)",
+          },
         ],
       },
       currentYear: new Date().getFullYear(), // Thêm biến để lưu trữ năm
-      years: Array.from({ length: 4 }, (_, index) => 2020 + index), // Danh sách năm từ 2020 đến 2023
+      years: Array.from({ length: 10 }, (_, index) => 2018 + index), // Danh sách năm từ 2020 đến 2023
     };
   },
   mounted() {
@@ -67,20 +76,45 @@ export default {
   methods: {
     async getDataFromAPI() {
       try {
+        const token = localStorage.getItem("token");
+        const config = {
+          headers: {
+            Authorization: token ? `${token}` : "",
+          },
+        };
+
         const promises = this.salesData.labels.map(async (label, index) => {
-          const response = await axios.get(
-            `http://localhost:5000/bill/bymonth/${this.currentYear}/${
-              index + 1
-            }`
-          );
-          return response.data.total;
+          try {
+            const response = await axios.get(
+              `http://localhost:5000/bill/bymonth/${this.currentYear}/${
+                index + 1
+              }`,
+              config
+            );
+
+            if (response.data && response.data.total) {
+              return {
+                total: response.data.total.total || 0,
+                totalOrders: response.data.total.totalOrders || 0,
+              };
+            } else {
+              throw new Error("Invalid response format");
+            }
+          } catch (error) {
+            console.error(`Error fetching data for month ${index + 1}`, error);
+            return {
+              total: 0,
+              totalOrders: 0,
+            };
+          }
         });
 
         // Chờ tất cả các yêu cầu hoàn thành trước khi cập nhật dữ liệu
         const data = await Promise.all(promises);
 
         // Cập nhật dữ liệu biểu đồ
-        this.salesData.datasets[0].data = data;
+        this.salesData.datasets[0].data = data.map((item) => item.total);
+        this.salesData.datasets[1].data = data.map((item) => item.totalOrders);
 
         // Render biểu đồ sau khi có dữ liệu
         this.renderChart();
@@ -88,6 +122,7 @@ export default {
         console.error("Error fetching data from API", error);
       }
     },
+
     renderChart() {
       const ctx = document.getElementById("salesChart").getContext("2d");
       // Nếu biểu đồ đã được tạo, hủy và tạo lại

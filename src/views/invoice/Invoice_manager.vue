@@ -44,7 +44,7 @@
           <tr>
             <th class="text-left">ID BILL</th>
             <th class="text-left">Trạng thái</th>
-            <th class="text-left">Gía</th>
+            <th class="text-left">Giá (VNĐ)</th>
             <th class="text-left">Khách hàng</th>
             <th class="text-left">Tên sách</th>
             <th class="text-left">Ngày tạo</th>
