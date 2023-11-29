@@ -50,10 +50,20 @@ export default {
             pointRadius: 4,
             pointBackgroundColor: "rgba(75, 192, 192, 1)",
           },
+          {
+            label: "Số đơn đặt hàng",
+            data: [],
+            fill: false,
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: "rgba(255, 99, 132, 1)",
+          },
         ],
       },
-      currentYear: new Date().getFullYear(), // Thêm biến để lưu trữ năm
-      years: Array.from({ length: 4 }, (_, index) => 2020 + index), // Danh sách năm từ 2020 đến 2023
+      currentYear: new Date().getFullYear(),
+      years: Array.from({ length: 4 }, (_, index) => 2020 + index),
+      salesChart: null,
     };
   },
   mounted() {
@@ -73,16 +83,17 @@ export default {
               index + 1
             }`
           );
-          return response.data.total;
+          return {
+            total: response.data.total.total,
+            totalOrders: response.data.total.totalOrders,
+          };
         });
 
-        // Chờ tất cả các yêu cầu hoàn thành trước khi cập nhật dữ liệu
         const data = await Promise.all(promises);
 
-        // Cập nhật dữ liệu biểu đồ
-        this.salesData.datasets[0].data = data;
+        this.salesData.datasets[0].data = data.map((item) => item.total);
+        this.salesData.datasets[1].data = data.map((item) => item.totalOrders);
 
-        // Render biểu đồ sau khi có dữ liệu
         this.renderChart();
       } catch (error) {
         console.error("Error fetching data from API", error);
@@ -90,7 +101,7 @@ export default {
     },
     renderChart() {
       const ctx = document.getElementById("salesChart").getContext("2d");
-      // Nếu biểu đồ đã được tạo, hủy và tạo lại
+
       if (this.salesChart) {
         this.salesChart.destroy();
       }
