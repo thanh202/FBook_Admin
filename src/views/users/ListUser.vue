@@ -1,4 +1,5 @@
 <template>
+
   <v-container>
     <v-btn @click="showAddDialog">Thêm mới</v-btn>
 
@@ -44,6 +45,7 @@
       </v-card>
     </v-dialog>
 
+
     <!-- Hộp thoại Sửa user -->
     <v-dialog v-model="isEditDialogVisible">
       <v-card>
@@ -79,6 +81,7 @@
 import axios from "axios";
 
 export default {
+
   data() {
     return {
       list: { result: [] },
@@ -135,6 +138,7 @@ export default {
     closeAddDialog() {
       this.isAddDialogVisible = false;
       this.resetNewUser();
+
     },
     resetNewUser() {
       this.newUser = {
@@ -166,6 +170,7 @@ export default {
         this.isEditDialogVisible = true;
       }
     },
+
     closeEditDialog() {
       this.isEditDialogVisible = false;
       this.editingUser = {
@@ -175,6 +180,7 @@ export default {
         Email: "",
         Birthday: "",
       };
+
     },
     async saveEditedUser() {
       try {

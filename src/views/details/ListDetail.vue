@@ -1,5 +1,6 @@
 <template>
   <h1>Quản lý chi tiết sách</h1>
+
   <div>
     <div
       class="d-flex align-center ma-6"
@@ -8,6 +9,7 @@
     >
       <v-btn color="primary" dark> Thêm Sách </v-btn>
     </div>
+
 
     <div class="tk">
       <input class="tim" v-model="searchKeyword" placeholder="Tìm kiếm sách" />

@@ -1,4 +1,5 @@
 <template>
+
   <div class="d-flex align-center flex-column pa-6">
     <h1>Danh sách hóa đơn</h1>
 
@@ -156,5 +157,6 @@ export default {
   border-radius: 10px;
   padding: 10px;
   margin: 30px 10px 10px 0px;
+
 }
 </style>
