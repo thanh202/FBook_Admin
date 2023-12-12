@@ -2,6 +2,8 @@
   <h1>Quản lý chi tiết sách</h1>
 
   <div>
+    <!-- Thêm vào template -->
+
     <div
       class="d-flex align-center ma-6"
       style="flex-direction: row-reverse"
@@ -9,7 +11,9 @@
     >
       <v-btn color="primary" dark> Thêm Sách </v-btn>
     </div>
-
+    <div class="d-flex align-center ma-6" style="flex-direction: row-reverse">
+      <v-btn color="primary" dark @click="exportToExcel">Export Excel</v-btn>
+    </div>
 
     <div class="tk">
       <input class="tim" v-model="searchKeyword" placeholder="Tìm kiếm sách" />
@@ -31,6 +35,7 @@
                 <th class="text-left">PublishYear</th>
                 <th class="text-left">PriceBook</th>
                 <th class="text-left">Discription</th>
+                <th class="text-left">Content</th>
                 <th class="text-left">ImageBook</th>
                 <th class="text-left">Ngày tạo</th>
                 <th class="text-left">Chapter</th>
@@ -47,7 +52,19 @@
                 <td class="text-left">{{ item.Author }}</td>
                 <td class="text-left">{{ item.PublishYear }}</td>
                 <td class="text-left">{{ item.PriceBook }}</td>
-                <td class="text-left">{{ item.Discription }}</td>
+                <td class="text-left wide-column">
+                  <div @click="showDescriptionDialog(item.Discription)">
+                    {{ truncateDescription(item.Discription, 2) }}
+                    <p class="Info">Chi tiết</p>
+                  </div>
+                </td>
+                <td class="text-left wide-column">
+                  <div @click="showDescriptionDialog(item.Content)">
+                    {{ truncateDescription(item.Content, 2) }}
+                    <p class="Info">Chi tiết</p>
+                  </div>
+                </td>
+                <!-- <td class="text-left">{{ item.Content }}</td> -->
                 <!-- Hiển thị hình ảnh sách -->
 
                 <td @click="console.log(item.image)">
@@ -81,7 +98,18 @@
         <v-pagination v-model="page" :length="pageCount"> </v-pagination>
       </v-card>
     </div>
-
+    <!-- các dialog -->
+    <v-dialog v-model="isDescriptionDialogVisible" class="description-dialog">
+      <v-card class="cart" style="height: 20vh">
+        <v-card-title>
+          <h1 style="margin: 0">Chi tiết sách</h1>
+        </v-card-title>
+        <v-card-text>{{ selectedDescription }}</v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeDescriptionDialog">Đóng</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="isAddDialogVisible" class="add-dialog">
       <v-form ref="form">
         <v-card class="cart">
@@ -119,6 +147,14 @@
             <v-textarea
               v-model="newBook.Discription"
               label="Mô tả"
+            ></v-textarea>
+          </v-col>
+
+          <v-col cols="12">
+            <v-textarea
+              v-model="newBook.Content"
+              label="Content"
+              required
             ></v-textarea>
           </v-col>
           <v-col cols="12">
@@ -203,6 +239,13 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12">
+            <v-textarea
+              v-model="editingItem.Content"
+              label="Content"
+              required
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12">
             <v-text-field
               v-model="editingItem.Chapter"
               label="Chương"
@@ -251,11 +294,35 @@
         </v-card>
       </v-form>
     </v-dialog>
+    //
+    <!-- // xóa -->
+    <v-dialog v-model="isDeleteDialogVisible">
+      <v-card class="d-flex align-center mx-auto">
+        <v-card-title>Xác nhận xóa</v-card-title>
+        <v-card-text>Bạn có chắc muốn xóa mục này không?</v-card-text>
+        <v-card-actions>
+          <v-btn @click="deleteItem" color="error">Xóa</v-btn>
+          <v-btn @click="closeDeleteDialog">Hủy</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Dialog hiển thị thông báo lỗi -->
+    <v-dialog v-model="errorDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline"> Thông Báo Lỗi </v-card-title>
+        <v-card-text>{{ errorMessages }}</v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeErrorDialog">Đóng</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import * as XLSX from "xlsx";
+
 // const page = ref(1);
 // const pageCount = ref(8);
 export default {
@@ -266,7 +333,12 @@ export default {
       searchResultVisible: false,
       list: { result: [] },
       itemToDelete: null,
+      isDeleteDialogVisible: false,
       selectedImage: null,
+      errorDialog: false,
+      errorMessages: null,
+      isDescriptionDialogVisible: false,
+      selectedDescription: "",
       isAddDialogVisible: false,
       newBook: {
         BookName: "",
@@ -274,6 +346,7 @@ export default {
         PublishYear: "",
         PriceBook: "",
         Discription: "",
+        Content: "",
         Chapter: "",
         Create_at: "",
       },
@@ -285,6 +358,7 @@ export default {
         PublishYear: "",
         PriceBook: "",
         Discription: "",
+        Content: "",
         ImageBook: "",
         Create_at: "",
         Chapter: "",
@@ -324,6 +398,13 @@ export default {
     }
   },
   methods: {
+    exportToExcel() {
+      const data = this.list.result;
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Books");
+      XLSX.writeFile(wb, "book_data.xlsx");
+    },
     async searchBooks(keyword) {
       try {
         if (keyword) {
@@ -350,6 +431,47 @@ export default {
         console.error("Lỗi khi tìm kiếm sách: ", error);
       }
     },
+    showDescriptionDialog(description) {
+      this.selectedDescription = description;
+      this.isDescriptionDialogVisible = true;
+    },
+    closeDescriptionDialog() {
+      this.isDescriptionDialogVisible = false;
+      this.selectedDescription = "";
+    },
+    truncateDescription(description, lines) {
+      const words = description.split(" ");
+      if (words.length <= lines * 10) {
+        return description;
+      }
+      const truncatedWords = words.slice(0, lines * 10);
+      return truncatedWords.join(" ") + "...";
+    },
+
+    showDeleteDialog(item) {
+      this.itemToDelete = item;
+      this.isDeleteDialogVisible = true;
+    },
+    // Mở dialog và hiển thị thông báo lỗi
+    showErrorDialog(message) {
+      this.errorMessages = message;
+      this.errorDialog = true;
+    },
+    // Đóng dialog
+    closeErrorDialog() {
+      this.errorMessages = null;
+      this.errorDialog = false;
+    },
+    // Đóng hộp thoại xác nhận xóa
+    closeDeleteDialog() {
+      this.isDeleteDialogVisible = false;
+      this.itemToDelete = null;
+    },
+
+    // Xác nhận xóa một danh mục
+    confirmDelete(item) {
+      this.showDeleteDialog(item);
+    },
 
     // Hiển thị hộp thoại Thêm mới sách
     showAddDialog() {
@@ -364,6 +486,7 @@ export default {
       this.newBook.PublishYear = "";
       this.newBook.PriceBook = "";
       this.newBook.Discription = "";
+      this.newBook.Content = "";
       this.newBook.Chapter = "";
       this.newBook.Create_at = "";
     },
@@ -407,6 +530,70 @@ export default {
     },
     // Thêm mới một sách
     async addNewBook() {
+      if (!this.newBook.BookName) {
+        this.showErrorDialog("Vui lòng nhập tên sách.");
+        return;
+      }
+
+      // Validate if Author is empty
+      if (!this.newBook.Author) {
+        this.showErrorDialog("Vui lòng nhập tên tác giả.");
+        return;
+      }
+      if (this.newBook.Discription.length <= 50) {
+        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 50 ký tự.");
+        return;
+      }
+      if (!this.newBook.Discription) {
+        this.showErrorDialog("Vui lòng nhập Discription");
+        return;
+      }
+      if (this.newBook.Content.length <= 5000) {
+        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
+        return;
+      }
+      if (!this.newBook.Content) {
+        this.showErrorDialog("Vui lòng nhập Content");
+        return;
+      }
+      // Validate if PublishYear is a number greater than 0
+      if (
+        isNaN(Number(this.newBook.PublishYear)) ||
+        Number(this.newBook.PublishYear) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập năm xuất bản hợp lệ.");
+        return;
+      }
+
+      // Validate if PriceBook is a number greater than 0
+      if (
+        isNaN(Number(this.newBook.PriceBook)) ||
+        Number(this.newBook.PriceBook) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
+        return;
+      }
+
+      // Validate if Chapter is a number greater than 0
+      if (
+        isNaN(Number(this.newBook.Chapter)) ||
+        Number(this.newBook.Chapter) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập số chương hợp lệ.");
+        return;
+      }
+
+      // Validate if ImageBook is not empty
+      if (!this.selectedImage) {
+        this.showErrorDialog("Vui lòng chọn một hình ảnh.");
+        return;
+      }
+
+      // Validate if IDCat is selected
+      if (!this.newBook.IDCat) {
+        this.showErrorDialog("Vui lòng chọn loại sách.");
+        return;
+      }
       try {
         const newData = {
           BookName: this.newBook.BookName,
@@ -414,6 +601,7 @@ export default {
           PublishYear: this.newBook.PublishYear,
           PriceBook: this.newBook.PriceBook,
           Discription: this.newBook.Discription,
+          Content: this.newBook.Content,
           ImageBook: this.selectedImage,
           Chapter: this.newBook.Chapter,
           IDCat: this.newBook.IDCat,
@@ -435,6 +623,7 @@ export default {
           this.newBook.PublishYear = "";
           this.newBook.PriceBook = "";
           this.newBook.Discription = "";
+          this.newBook.Content = "";
           this.newBook.Chapter = "";
           this.newBook.Create_at = "";
           this.selectedImage = response.data.imageUrl;
@@ -463,6 +652,7 @@ export default {
       this.editingItem.PublishYear = item.PublishYear;
       this.editingItem.PriceBook = item.PriceBook;
       this.editingItem.Discription = item.Discription;
+      this.editingItem.Content = item.Content;
       this.editingItem.ImageBook = item.ImageBook;
       this.editingItem.Create_at = item.Create_at;
       this.editingItem.Chapter = item.Chapter;
@@ -479,12 +669,72 @@ export default {
       this.editingItem.PublishYear = "";
       this.editingItem.PriceBook = "";
       this.editingItem.Discription = "";
+      this.editingItem.Content = "";
       this.editingItem.ImageBook = "";
       this.editingItem.Create_at = "";
       this.editingItem.Chapter = "";
       this.editingItem.IDCat = "";
     },
     async saveEditedItem() {
+      if (!this.editingItem.BookName) {
+        this.showErrorDialog("Vui lòng nhập tên sách.");
+        return;
+      }
+
+      // Validate if Author is empty
+      if (!this.editingItem.Author) {
+        this.showErrorDialog("Vui lòng nhập tên tác giả.");
+        return;
+      }
+      if (this.editingItem.Discription.length <= 50) {
+        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
+        return;
+      }
+      if (!this.editingItem.Discription) {
+        this.showErrorDialog("Vui lòng nhập Discription");
+        return;
+      }
+      if (this.editingItem.Content.length <= 5000) {
+        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
+        return;
+      }
+      if (!this.editingItem.Content) {
+        this.showErrorDialog("Vui lòng nhập Discription");
+        return;
+      }
+
+      // Validate if PublishYear is a number greater than 0
+      if (
+        isNaN(Number(this.editingItem.PublishYear)) ||
+        Number(this.editingItem.PublishYear) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập năm xuất bản hợp lệ.");
+        return;
+      }
+
+      // Validate if PriceBook is a number greater than 0
+      if (
+        isNaN(Number(this.editingItem.PriceBook)) ||
+        Number(this.editingItem.PriceBook) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
+        return;
+      }
+
+      // Validate if Chapter is a number greater than 0
+      if (
+        isNaN(Number(this.editingItem.Chapter)) ||
+        Number(this.editingItem.Chapter) <= 0
+      ) {
+        this.showErrorDialog("Vui lòng nhập số chương hợp lệ.");
+        return;
+      }
+
+      // Validate if IDCat is selected
+      if (!this.editingItem.IDCat) {
+        this.showErrorDialog("Vui lòng chọn loại sách.");
+        return;
+      }
       try {
         const updatedData = {
           IDBook: this.editingItem.IDBook,
@@ -493,6 +743,7 @@ export default {
           PublishYear: this.editingItem.PublishYear,
           PriceBook: this.editingItem.PriceBook,
           Discription: this.editingItem.Discription,
+          Content: this.editingItem.Content,
           ImageBook: this.selectedImage || this.editingItem.ImageBook,
           Create_at: this.editingItem.Create_at,
           Chapter: this.editingItem.Chapter,
@@ -543,10 +794,10 @@ export default {
       }
     },
     // Xác nhận xóa sách
-    confirmDelete(item) {
-      this.itemToDelete = item;
-      this.deleteItem();
-    },
+    // confirmDelete(item) {
+    //   this.itemToDelete = item;
+    //   this.deleteItem();
+    // },
 
     // Xóa sách
     async deleteItem() {
@@ -566,13 +817,21 @@ export default {
           } else {
             // Xử lý trường hợp xóa khỏi cơ sở dữ liệu thất bại
             console.error("Không thể xóa mục khỏi cơ sở dữ liệu");
+            this.showErrorDialog(
+              "Sách đang có trong bill và favorite của khách"
+            );
             this.itemToDelete = null; // Xóa mục khỏi biến itemToDelete để ngăn chặn các thử nghiệm xóa tiếp theo
           }
         } catch (error) {
           console.error("Lỗi khi xóa: ", error);
-          this.itemToDelete = null; // Xóa mục khỏi biến itemToDelete để ngăn chặn các thử nghiệm xóa tiếp theo
+
+          this.showErrorDialog("Sách đang có trong bill và favorite của khách");
+          this.itemToDelete = null;
+
+          // Xóa mục khỏi biến itemToDelete để ngăn chặn các thử nghiệm xóa tiếp theo
         }
       }
+      this.closeDeleteDialog();
     },
   },
 };
@@ -626,5 +885,25 @@ td {
   border-radius: 20px;
   padding: 5px;
   margin-right: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+.description-dialog {
+  height: 90%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.Info {
+  color: #666666;
+  font-style: italic;
+  margin: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+.wide-column {
+  width: 200px; /* hoặc bất kỳ giá trị nào bạn muốn */
 }
 </style>

@@ -1,5 +1,4 @@
 <template>
-
   <v-container>
     <v-btn @click="showAddDialog">Thêm mới</v-btn>
 
@@ -11,9 +10,9 @@
           <td>{{ props.item.UserName }}</td>
           <td>{{ props.item.Email }}</td>
           <td>{{ props.item.Birthday }}</td>
+          <td>{{ props.item.Phone }}</td>
           <td>
-            <v-btn @click="editItem(props.item)">Sửa</v-btn>
-            <v-btn @click="confirmDeleteUser(props.item)">Xóa</v-btn>
+            <v-btn @click="confirmDelete(props.item)">Xóa</v-btn>
           </td>
         </tr>
       </template>
@@ -33,6 +32,7 @@
             type="password"
           ></v-text-field>
           <v-text-field v-model="newUser.Email" label="Email"></v-text-field>
+          <v-text-field v-model="newUser.Phone" label="Phone"></v-text-field>
           <v-text-field
             v-model="newUser.Birthday"
             label="Birthday"
@@ -44,33 +44,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-
-    <!-- Hộp thoại Sửa user -->
-    <v-dialog v-model="isEditDialogVisible">
-      <v-card>
-        <v-card-text>
-          <v-text-field
-            v-model="editingUser.UserName"
-            label="UserName"
-          ></v-text-field>
-          <v-text-field
-            v-model="editingUser.PassWord"
-            label="Password"
-            type="password"
-          ></v-text-field>
-          <v-text-field
-            v-model="editingUser.Email"
-            label="Email"
-          ></v-text-field>
-          <v-text-field
-            v-model="editingUser.Birthday"
-            label="Birthday"
-          ></v-text-field>
-        </v-card-text>
+    <!-- diloag xoa -->
+    <v-dialog v-model="isDeleteDialogVisible">
+      <v-card class="d-flex align-center mx-auto">
+        <v-card-title>Xác nhận xóa</v-card-title>
+        <v-card-text>Bạn có chắc muốn xóa mục này không?</v-card-text>
         <v-card-actions>
-          <v-btn @click="saveEditedUser">Lưu</v-btn>
-          <v-btn @click="closeEditDialog">Hủy</v-btn>
+          <v-btn @click="deleteUser" color="error">Xóa</v-btn>
+          <v-btn @click="closeDeleteDialog">Hủy</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- thong bao loi -->
+    <v-dialog v-model="errorDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline"> Thông Báo Lỗi </v-card-title>
+        <v-card-text>{{ errorMessages }}</v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeErrorDialog">Đóng</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -81,31 +72,29 @@
 import axios from "axios";
 
 export default {
-
   data() {
     return {
       list: { result: [] },
       itemToDelete: null,
       isAddDialogVisible: false,
+      errorDialog: false,
+      errorMessages: null,
+
+      isDeleteDialogVisible: false,
       newUser: {
         UserName: "",
         PassWord: "",
         Email: "",
         Birthday: "",
+        Phone: "",
       },
-      isEditDialogVisible: false,
-      editingUser: {
-        IDUser: null,
-        UserName: "",
-        PassWord: "",
-        Email: "",
-        Birthday: "",
-      },
+
       headers: [
         { text: "IDUser", value: "IDUser" },
         { text: "UserName", value: "UserName" },
         { text: "Email", value: "Email" },
         { text: "Birthday", value: "Birthday" },
+        { text: "Phone", value: "Phone" },
         { text: "Thao tác", value: "actions", sortable: false },
       ],
     };
@@ -138,7 +127,25 @@ export default {
     closeAddDialog() {
       this.isAddDialogVisible = false;
       this.resetNewUser();
-
+    },
+    showErrorDialog(message) {
+      this.errorMessages = message;
+      this.errorDialog = true;
+    },
+    closeErrorDialog() {
+      this.errorMessages = null;
+      this.errorDialog = false;
+    },
+    showDeleteDialog(item) {
+      this.itemToDelete = item;
+      this.isDeleteDialogVisible = true;
+    },
+    closeDeleteDialog() {
+      this.isDeleteDialogVisible = false;
+      this.itemToDelete = null;
+    },
+    confirmDelete(item) {
+      this.showDeleteDialog(item);
     },
     resetNewUser() {
       this.newUser = {
@@ -146,6 +153,7 @@ export default {
         PassWord: "",
         Email: "",
         Birthday: "",
+        Phone: "",
       };
     },
     async addNewUser() {
@@ -164,54 +172,7 @@ export default {
         console.error("Lỗi khi thêm mới user: ", error);
       }
     },
-    editItem(user) {
-      if (user && user.IDUser) {
-        this.editingUser = { ...user };
-        this.isEditDialogVisible = true;
-      }
-    },
 
-    closeEditDialog() {
-      this.isEditDialogVisible = false;
-      this.editingUser = {
-        IDUser: null,
-        UserName: "",
-        PassWord: "",
-        Email: "",
-        Birthday: "",
-      };
-
-    },
-    async saveEditedUser() {
-      try {
-        const response = await axios.put(
-          `http://localhost:5000/user/update/${this.editingUser.IDUser}`,
-          this.editingUser
-        );
-
-        if (response.status === 200) {
-          const updatedIndex = this.list.result.findIndex(
-            (user) => user.IDUser === this.editingUser.IDUser
-          );
-
-          if (updatedIndex !== -1) {
-            this.list.result[updatedIndex] = response.data.result;
-          }
-
-          this.isEditDialogVisible = false;
-          this.editingUser = {
-            IDUser: null,
-            UserName: "",
-            PassWord: "",
-            Email: "",
-            Birthday: "",
-          };
-          this.fetchUserList();
-        }
-      } catch (error) {
-        console.error("Lỗi khi lưu sửa user: ", error);
-      }
-    },
     async fetchUserList() {
       try {
         let response = await axios.get("http://localhost:5000/user/get_list");
@@ -220,10 +181,7 @@ export default {
         console.error("Lỗi trong quá trình yêu cầu danh sách user:", error);
       }
     },
-    confirmDeleteUser(user) {
-      this.itemToDelete = user;
-      this.deleteUser();
-    },
+
     async deleteUser() {
       if (this.itemToDelete) {
         try {
@@ -237,14 +195,21 @@ export default {
             );
             this.itemToDelete = null;
           } else {
+            this.showErrorDialog(
+              "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
+            );
             console.error("Không thể xóa user khỏi cơ sở dữ liệu");
             this.itemToDelete = null;
           }
         } catch (error) {
+          this.showErrorDialog(
+            "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
+          );
           console.error("Lỗi khi xóa user: ", error);
           this.itemToDelete = null;
         }
       }
+      this.closeDeleteDialog();
     },
   },
 };

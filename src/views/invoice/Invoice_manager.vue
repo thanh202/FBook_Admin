@@ -1,5 +1,4 @@
 <template>
-
   <div class="d-flex align-center flex-column pa-6">
     <h1>Danh sách hóa đơn</h1>
 
@@ -36,6 +35,14 @@
           <v-col cols="1" md="3">
             <v-btn class="bnt" color="primary" @click="clear()">Clear</v-btn>
           </v-col>
+          <div
+            class="d-flex align-center ma-6"
+            style="flex-direction: row-reverse"
+          >
+            <v-btn color="primary" dark @click="exportToExcel"
+              >Export Excel</v-btn
+            >
+          </div>
         </v-row>
       </form>
       <v-table hover>
@@ -72,7 +79,7 @@
 
 <script>
 import axios from "axios";
-
+import * as XLSX from "xlsx";
 export default {
   data() {
     return {
@@ -108,6 +115,13 @@ export default {
     }
   },
   methods: {
+    exportToExcel() {
+      const data = this.list.result;
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Books");
+      XLSX.writeFile(wb, "book_data.xlsx");
+    },
     async clear() {
       this.searchKeyword = null; // Đặt giá trị của ô tìm kiếm về rỗng;
       await this.fetchbill();
@@ -157,6 +171,5 @@ export default {
   border-radius: 10px;
   padding: 10px;
   margin: 30px 10px 10px 0px;
-
 }
 </style>
