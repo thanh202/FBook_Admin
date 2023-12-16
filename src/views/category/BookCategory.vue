@@ -1,4 +1,5 @@
 <template>
+  <h1 style="font-size: 30px">Quản lý loại sách</h1>
   <div>
     <v-btn @click="showAddDialog" color="primary">Thêm mới</v-btn>
     <v-card class="mt-6" width="100%">
@@ -8,6 +9,15 @@
         :items-per-page="perPage"
         :page.sync="page"
       >
+        <template v-slot:header>
+          <thead>
+            <tr>
+              <th class="text-left">IDBook</th>
+              <th class="text-left">Ten sách</th>
+              <th class="text-left">Tác giả</th>
+            </tr>
+          </thead>
+        </template>
         <template v-slot:item.img="{ item }">
           <v-img
             :src="'http://localhost:5000/' + item.img"
@@ -37,7 +47,7 @@
         <v-card-text>
           <v-text-field
             v-model="newCategory.CatName"
-            label="CatName"
+            label="Tên loại"
           ></v-text-field>
           <v-file-input
             @change="handleImageUpload"
@@ -63,7 +73,7 @@
         <v-card-text>
           <v-text-field
             v-model="editingItem.CatName"
-            label="CatName"
+            label="Tên loại"
           ></v-text-field>
           <v-file-input
             @change="handleImageUpload"

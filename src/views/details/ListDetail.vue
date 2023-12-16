@@ -30,17 +30,17 @@
             <thead>
               <tr>
                 <th class="text-left">IDBook</th>
-                <th class="text-left">BookName</th>
-                <th class="text-left">Author</th>
-                <th class="text-left">PublishYear</th>
-                <th class="text-left">PriceBook</th>
-                <th class="text-left">Discription</th>
-                <th class="text-left">Content</th>
-                <th class="text-left">ImageBook</th>
+                <th class="text-left">Ten sách</th>
+                <th class="text-left">Tác giả</th>
+                <th class="text-left">Năm xuất bản</th>
+                <th class="text-left">Gía sách(VNĐ)</th>
+                <th class="text-left">Mô tả</th>
+                <th class="text-left">Nội dung</th>
+                <th class="text-left">Ảnh</th>
                 <th class="text-left">Ngày tạo</th>
-                <th class="text-left">Chapter</th>
+                <th class="text-left">Chương</th>
                 <th class="text-left">Loại</th>
-                <th class="text-left">Thao tac</th>
+                <th class="text-left">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -100,7 +100,7 @@
     </div>
     <!-- các dialog -->
     <v-dialog v-model="isDescriptionDialogVisible" class="description-dialog">
-      <v-card class="cart" style="height: 20vh">
+      <v-card class="cart" style="height: 90vh">
         <v-card-title>
           <h1 style="margin: 0">Chi tiết sách</h1>
         </v-card-title>
@@ -110,6 +110,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="isAddDialogVisible" class="add-dialog">
       <v-form ref="form">
         <v-card class="cart">
@@ -140,7 +141,7 @@
           <v-col cols="12">
             <v-text-field
               v-model="newBook.PriceBook"
-              label="Giá sách"
+              label="Giá sách(VNĐ)"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -153,7 +154,7 @@
           <v-col cols="12">
             <v-textarea
               v-model="newBook.Content"
-              label="Content"
+              label="Nội dung"
               required
             ></v-textarea>
           </v-col>

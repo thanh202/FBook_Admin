@@ -1,4 +1,5 @@
 <template>
+  <h1 style="font-size: 30px">Quản lý thông tin người dùng</h1>
   <v-container>
     <v-btn @click="showAddDialog">Thêm mới</v-btn>
 
@@ -22,20 +23,17 @@
     <v-dialog v-model="isAddDialogVisible">
       <v-card>
         <v-card-text>
-          <v-text-field
-            v-model="newUser.UserName"
-            label="UserName"
-          ></v-text-field>
+          <v-text-field v-model="newUser.UserName" label="Tên "></v-text-field>
           <v-text-field
             v-model="newUser.PassWord"
-            label="Password"
+            label="Mật khẩu"
             type="password"
           ></v-text-field>
           <v-text-field v-model="newUser.Email" label="Email"></v-text-field>
-          <v-text-field v-model="newUser.Phone" label="Phone"></v-text-field>
+          <v-text-field v-model="newUser.Phone" label="SĐT"></v-text-field>
           <v-text-field
             v-model="newUser.Birthday"
-            label="Birthday"
+            label="Ngày sinh"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
@@ -79,7 +77,7 @@ export default {
       isAddDialogVisible: false,
       errorDialog: false,
       errorMessages: null,
-
+      due: null,
       isDeleteDialogVisible: false,
       newUser: {
         UserName: "",
@@ -157,6 +155,9 @@ export default {
       };
     },
     async addNewUser() {
+      if (!this.validateUser()) {
+        return;
+      }
       try {
         const response = await axios.post(
           "http://localhost:5000/user/add",
@@ -172,7 +173,46 @@ export default {
         console.error("Lỗi khi thêm mới user: ", error);
       }
     },
+    validateUser() {
+      // Kiểm tra UserName
+      if (!this.newUser.UserName) {
+        this.showErrorDialog("UserName không được để trống.");
+        return false;
+      }
 
+      // Kiểm tra Password
+      if (this.newUser.PassWord.length < 6) {
+        this.showErrorDialog("Password phải có ít nhất 6 ký tự.");
+        return false;
+      }
+
+      // Kiểm tra Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.newUser.Email)) {
+        this.showErrorDialog("Email không hợp lệ.");
+        return false;
+      }
+
+      // Kiểm tra Birthday (giả sử định dạng là yyyy-mm-dd)
+      const birthdayRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!birthdayRegex.test(this.newUser.Birthday)) {
+        this.showErrorDialog(
+          "Ngày sinh không hợp lệ. Định dạng phải là yyyy-mm-dd."
+        );
+        return false;
+      }
+
+      // Kiểm tra Phone (giả sử chỉ chấp nhận số điện thoại Việt Nam)
+      const phoneRegex = /^\+84\d{9,10}$/;
+      if (!phoneRegex.test(this.newUser.Phone)) {
+        this.showErrorDialog(
+          "Số điện thoại không hợp lệ. Định dạng phải là +840xxxxxxxx."
+        );
+        return false;
+      }
+
+      return true;
+    },
     async fetchUserList() {
       try {
         let response = await axios.get("http://localhost:5000/user/get_list");

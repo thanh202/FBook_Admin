@@ -85,7 +85,7 @@ export default {
     return {
       list: { result: [] },
       searchResultVisible: false,
-      statusOptions: ["Paid", "Pending"], // Danh sách tùy chọn trạng thái
+      statusOptions: ["Đã thanh toán", "Chưa thanh toán"], // Danh sách tùy chọn trạng thái
     };
   },
   computed: {
