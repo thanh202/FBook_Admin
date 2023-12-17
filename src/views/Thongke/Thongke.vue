@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Thống kê doanh số bán hàng theo tháng</h1>
-
+    <v-btn style="margin: 20px" @click="exportToExcel">Xuất Excel</v-btn>
     <v-row>
       <v-col>
         <v-select
@@ -21,7 +21,7 @@
 <script>
 import Chart from "chart.js/auto";
 import axios from "axios";
-
+import * as XLSX from "xlsx";
 export default {
   data() {
     return {
@@ -75,6 +75,34 @@ export default {
     },
   },
   methods: {
+    exportToExcel() {
+      try {
+        // Lấy dữ liệu từ biểu đồ
+        const chartData = this.salesChart.data.datasets;
+        const labels = this.salesData.labels;
+
+        // Tạo mảng dữ liệu cho sheet từ dữ liệu biểu đồ
+        const data = labels.map((label, index) => ({
+          Năm: this.currentYear,
+          Tháng: label,
+          "Doanh số bán hàng": chartData[0].data[index],
+          "Số đơn đặt hàng": chartData[1].data[index],
+        }));
+
+        // Tạo sheet từ mảng dữ liệu
+        const ws = XLSX.utils.json_to_sheet(data);
+
+        // Tạo workbook và thêm sheet vào workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Thống kê doanh số");
+
+        // Xuất file Excel
+        XLSX.writeFile(wb, `thongke_doanhso_${this.currentYear}.xlsx`);
+      } catch (error) {
+        console.error("Error exporting to Excel", error);
+      }
+    },
+
     async getDataFromAPI() {
       try {
         const promises = this.salesData.labels.map(async (label, index) => {

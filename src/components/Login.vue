@@ -62,7 +62,8 @@
 
 <script>
 import axios from "axios";
-
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   data: () => ({
     visible: false,
@@ -70,6 +71,11 @@ export default {
     password: "",
     loginError: null,
   }),
+  setup() {
+    toast("Chào mừng bạn trở lại", {
+      autoClost: 1000,
+    });
+  },
   methods: {
     async login() {
       try {
@@ -93,6 +99,7 @@ export default {
             console.log("Đăng nhập thành công");
             console.log("Token:", response.data.result);
             this.$router.push("/list-deltai");
+            toast.success("Đăng nhập thành công");
           } else {
             console.error("Lỗi: Token không được lưu vào localStorage.");
           }

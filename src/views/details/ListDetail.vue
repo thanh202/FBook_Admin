@@ -118,76 +118,77 @@
             <h1 style="margin: 0">Thêm Sách</h1>
           </v-card-title>
           <!-- Các trường nhập liệu -->
-          <v-col cols="12">
-            <v-text-field
-              v-model="newBook.BookName"
-              label="Tên sách"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="newBook.Author"
-              label="Tác giả"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="newBook.PublishYear"
-              label="Năm xuất bản"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="newBook.PriceBook"
-              label="Giá sách(VNĐ)"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-textarea
-              v-model="newBook.Discription"
-              label="Mô tả"
-            ></v-textarea>
-          </v-col>
-
-          <v-col cols="12">
-            <v-textarea
-              v-model="newBook.Content"
-              label="Nội dung"
-              required
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="newBook.Chapter"
-              label="Chương"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <input type="file" accept="image/*" @change="handleImageUpload" />
-            <v-img
-              v-if="selectedImage"
-              :src="'http://localhost:5000/' + selectedImage"
-              alt="Hình ảnh đã chọn"
-              id="img2"
-            ></v-img>
-          </v-col>
-          <v-col cols="12">
-            <label for="type">Loại sách:</label>
-            <select v-model="newBook.IDCat">
-              <option
-                v-for="type in types"
-                :key="type.IDCat"
-                :value="type.IDCat"
-              >
-                {{ type.CatName }}
-              </option>
-            </select>
-          </v-col>
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                v-model="newBook.BookName"
+                label="Tên sách"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="newBook.Author"
+                label="Tác giả"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="newBook.PublishYear"
+                label="Năm xuất bản"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="newBook.PriceBook"
+                label="Giá sách(VNĐ)"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="newBook.Discription"
+                label="Mô tả"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="newBook.Content"
+                label="Nội dung"
+                required
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="newBook.Chapter"
+                label="Chương"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <input type="file" accept="image/*" @change="handleImageUpload" />
+              <v-img
+                v-if="selectedImage"
+                :src="'http://localhost:5000/' + selectedImage"
+                alt="Hình ảnh đã chọn"
+                id="img2"
+              ></v-img>
+            </v-col>
+            <v-col cols="12">
+              <label for="type">Loại sách:</label>
+              <select v-model="newBook.IDCat">
+                <option disabled value="">Chọn loại sách</option>
+                <option
+                  v-for="type in types"
+                  :key="type.IDCat"
+                  :value="type.IDCat"
+                >
+                  {{ type.CatName }}
+                </option>
+              </select>
+            </v-col>
+          </v-row>
 
           <!-- Nút thêm sách và hủy bỏ -->
-
           <v-card-actions>
             <v-btn @click="addNewBook">Thêm</v-btn>
             <v-btn @click="closeAddDialog">Hủy</v-btn>
@@ -207,87 +208,89 @@
             <h1 style="margin: 0">Sửa Sách</h1>
           </v-card-title>
           <!-- Các trường nhập liệu -->
-          <v-col cols="12">
-            <v-text-field
-              v-model="editingItem.BookName"
-              label="Tên sách"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="editingItem.Author"
-              label="Tác giả"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="editingItem.PublishYear"
-              label="Năm xuất bản"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="editingItem.PriceBook"
-              label="Giá sách"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-textarea
-              v-model="editingItem.Discription"
-              label="Mô tả"
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12">
-            <v-textarea
-              v-model="editingItem.Content"
-              label="Content"
-              required
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="editingItem.Chapter"
-              label="Chương"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <input
-              type="file"
-              accept="image/*"
-              @change="handleImageUpload"
-              id="imgs"
-            />
-            <!-- Hiển thị ảnh hiện tại -->
-            <img
-              v-if="editingItem.ImageBook"
-              :src="'http://localhost:5000/' + editingItem.ImageBook"
-              alt="Hình ảnh hiện tại"
-              id="img2"
-            />
-            <!-- Hiển thị ảnh đã chọn -->
-            <img
-              v-if="selectedImage"
-              :src="'http://localhost:5000/' + selectedImage"
-              alt="Hình ảnh đã chọn"
-              id="img2"
-            />
-          </v-col>
-          <v-col cols="12">
-            <label for="type">Loại sách:</label>
-            <select v-model="editingItem.IDCat">
-              <option
-                v-for="type in types"
-                :key="type.IDCat"
-                :value="type.IDCat"
-              >
-                {{ type.CatName }}
-              </option>
-            </select>
-          </v-col>
-          <!-- Nút lưu và hủy bỏ -->
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editingItem.BookName"
+                label="Tên sách"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editingItem.Author"
+                label="Tác giả"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editingItem.PublishYear"
+                label="Năm xuất bản"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editingItem.PriceBook"
+                label="Giá sách"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="editingItem.Discription"
+                label="Mô tả"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="editingItem.Content"
+                label="Content"
+                required
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editingItem.Chapter"
+                label="Chương"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <input
+                type="file"
+                accept="image/*"
+                @change="handleImageUpload"
+                id="imgs"
+              />
+              <!-- Hiển thị ảnh hiện tại -->
+              <img
+                v-if="editingItem.ImageBook"
+                :src="'http://localhost:5000/' + editingItem.ImageBook"
+                alt="Hình ảnh hiện tại"
+                id="img2"
+              />
+              <!-- Hiển thị ảnh đã chọn -->
+              <img
+                v-if="selectedImage"
+                :src="'http://localhost:5000/' + selectedImage"
+                alt="Hình ảnh đã chọn"
+                id="img2"
+              />
+            </v-col>
+            <v-col cols="12">
+              <label for="type">Loại sách:</label>
+              <select v-model="editingItem.IDCat">
+                <option
+                  v-for="type in types"
+                  :key="type.IDCat"
+                  :value="type.IDCat"
+                >
+                  {{ type.CatName }}
+                </option>
+              </select>
+            </v-col>
+          </v-row>
 
+          <!-- Nút lưu và hủy bỏ -->
           <v-card-actions>
             <v-btn @click="saveEditedItem">Lưu</v-btn>
             <v-btn @click="closeEditDialog">Hủy</v-btn>
@@ -295,6 +298,7 @@
         </v-card>
       </v-form>
     </v-dialog>
+
     //
     <!-- // xóa -->
     <v-dialog v-model="isDeleteDialogVisible">
@@ -323,7 +327,8 @@
 <script>
 import axios from "axios";
 import * as XLSX from "xlsx";
-
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 // const page = ref(1);
 // const pageCount = ref(8);
 export default {
@@ -391,11 +396,13 @@ export default {
 
       let response = await axios.get("http://localhost:5000/Book/get_list");
       console.log("Server Response:", response.data);
+
       // Log server response
       this.list = response.data;
       this.originalList = JSON.parse(JSON.stringify(response.data)); // Copy data
     } catch (error) {
       console.error("Lỗi trong quá trình yêu cầu:", error);
+      toast.success("Bạn chưa đăng nhập!");
     }
   },
   methods: {
@@ -617,6 +624,7 @@ export default {
 
         // Thêm sau khi thêm mới sách thành công
         if (response.status === 200) {
+          toast.success("Thêm sách thành công!");
           // Đóng hộp thoại Thêm mới sách và cập nhật danh sách sách local
           this.isAddDialogVisible = false;
           this.newBook.BookName = "";
@@ -760,6 +768,7 @@ export default {
         // Cập nhật sau khi sửa sách thành công
         if (response.status === 200) {
           // Đóng hộp thoại Sửa sách
+          toast.success("Sửa sách thành công!");
           this.isEditDialogVisible = false;
 
           // Gọi lại hàm để lấy danh sách sách mới sau khi sửa sách
@@ -810,6 +819,7 @@ export default {
           );
 
           if (response.status === 200) {
+            toast.success("Xóa sách thành công!");
             // Xóa thành công khỏi cơ sở dữ liệu, bây giờ hãy cập nhật danh sách cục bộ
             this.list.result = this.list.result.filter(
               (item) => item.IDBook !== this.itemToDelete.IDBook
@@ -906,5 +916,23 @@ td {
 }
 .wide-column {
   width: 200px; /* hoặc bất kỳ giá trị nào bạn muốn */
+}
+.v-col {
+  display: flex;
+  align-items: center;
+}
+
+/* Tạo khoảng cách giữa label và select */
+label {
+  margin-right: 10px; /* Điều chỉnh khoảng cách tùy ý */
+}
+
+/* Tối ưu hóa giao diện của select box */
+select {
+  padding: 8px; /* Điều chỉnh độ dày và cao của select box */
+  font-size: 14px; /* Điều chỉnh kích thước chữ trong select box */
+  border: 1px solid #ccc; /* Thêm đường viền */
+  border-radius: 4px; /* Bo tròn góc */
+  cursor: pointer; /* Đổi con trỏ khi di chuyển qua select box */
 }
 </style>

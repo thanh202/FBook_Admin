@@ -75,10 +75,7 @@
       <template v-slot:append>
         <div class="pa-0">
           <router-link to="/">
-            <v-list-item
-              prepend-icon="mdi-logout"
-              @click="console.log('clicked')"
-            >
+            <v-list-item prepend-icon="mdi-logout" @click="logout">
               <v-list-item-title style="margin-right: 40px"
                 >Đăng Xuất</v-list-item-title
               >
@@ -103,9 +100,31 @@
 
 <script setup>
 import { ref } from "vue";
-const drawer = ref(true);
-</script>
+import { useRouter } from "vue-router";
+import axios from "axios";
 
+const router = useRouter();
+const drawer = ref(true);
+
+// const goTo = (route) => {
+//   router.push(`/${route}`);
+// };
+
+const logout = async () => {
+  try {
+    // Xóa token khỏi localStorage
+    localStorage.removeItem("token");
+
+    // Xóa token khỏi các yêu cầu sau này (nếu có)
+    delete axios.defaults.headers.common["Authorization"];
+
+    // Chuyển hướng người dùng về trang đăng nhập
+    router.push("/");
+  } catch (error) {
+    console.error("Error during logout:", error.message);
+  }
+};
+</script>
 <style lang="scss">
 #app {
   font-family: Arial, Helvetica, sans-serif;

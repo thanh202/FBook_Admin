@@ -123,6 +123,8 @@
 </template>
 <script>
 import axios from "axios";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   name: "App",
   data() {
@@ -154,6 +156,7 @@ export default {
       },
     };
   },
+
   async mounted() {
     try {
       axios.interceptors.request.use((config) => {
@@ -169,6 +172,7 @@ export default {
       this.pageCount = Math.ceil(this.list.result.length / this.perPage);
     } catch (error) {
       console.error("Lỗi trong quá trình yêu cầu:", error);
+      toast.success("Bạn chưa đăng nhập!");
     }
   },
   methods: {
@@ -264,6 +268,7 @@ export default {
 
         // Thêm sau khi thêm mới danh mục thành công
         if (response.status === 200) {
+          toast.success("Thêm mới thành công!");
           // Đóng hộp thoại Thêm mới danh mục và cập nhật danh sách danh mục local
           this.isAddDialogVisible = false;
           this.newCategory.CatName = "";
@@ -312,6 +317,7 @@ export default {
 
         if (response.status === 200) {
           // Tìm mục cần cập nhật trong danh sách và cập nhật nó
+          toast.success("Sửa loại thành công!");
           const updatedIndex = this.list.result.findIndex(
             (item) => item.IDCat === this.editingItem.IDCat
           );
@@ -347,10 +353,12 @@ export default {
           );
 
           if (response.status === 200) {
+            toast.success("Xóa loại thành công!");
             // Xóa thành công khỏi cơ sở dữ liệu, bây giờ hãy cập nhật danh sách cục bộ
             this.list.result = this.list.result.filter(
               (item) => item.IDCat !== this.itemToDelete.IDCat
             );
+
             this.itemToDelete = null;
           } else {
             // Xử lý trường hợp xóa khỏi cơ sở dữ liệu thất bại

@@ -68,7 +68,8 @@
 
 <script>
 import axios from "axios";
-
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   data() {
     return {
@@ -116,6 +117,7 @@ export default {
       this.list = response.data;
     } catch (error) {
       console.error("Lỗi trong quá trình yêu cầu:", error);
+      toast.success("Bạn chưa đăng nhập!");
     }
   },
   methods: {
@@ -165,6 +167,7 @@ export default {
         );
 
         if (response.status === 200) {
+          toast.success("Thêm người dùng thành công!");
           this.isAddDialogVisible = false;
           this.resetNewUser();
           this.fetchUserList();
@@ -230,6 +233,7 @@ export default {
           );
 
           if (response.status === 200) {
+            toast.success("Xóa người dùng thành công!");
             this.list.result = this.list.result.filter(
               (user) => user.IDUser !== this.itemToDelete.IDUser
             );
