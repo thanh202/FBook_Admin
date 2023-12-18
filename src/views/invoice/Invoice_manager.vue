@@ -60,7 +60,11 @@
         </thead>
         <tbody>
           <!-- Lặp qua các sách trong danh sách -->
-          <tr v-for="(item, index) in list.result" :key="item.IDBill">
+          <!-- <tr v-for="(item, index) in list.result" :key="item.IDBill"> -->
+          <tr
+            v-for="(item, index) in list.result.slice(startIndex, endIndex + 1)"
+            :key="item.IDBill"
+          >
             <!-- Hiển thị thông tin sách -->
             <td class="text-left">{{ index + 1 }}</td>
             <td class="text-left">{{ item.Status }}</td>
@@ -72,7 +76,7 @@
         </tbody>
       </v-table>
 
-      <v-pagination v-model="page" :length="pageCount"> </v-pagination>
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </v-card>
   </div>
 </template>
@@ -83,14 +87,23 @@ import * as XLSX from "xlsx";
 export default {
   data() {
     return {
+      page: 1, // Trang hiện tại
+      itemsPerPage: 10, // Số lượng mục trên mỗi trang
       list: { result: [] },
       searchResultVisible: false,
-      statusOptions: ["Đã thanh toán", "Chưa thanh toán"], // Danh sách tùy chọn trạng thái
+      statusOptions: ["Đã Thanh Toán", "Chưa thanh toán"], // Danh sách tùy chọn trạng thái
     };
   },
+
   computed: {
+    startIndex() {
+      return (this.page - 1) * this.itemsPerPage;
+    },
+    endIndex() {
+      return this.startIndex + this.itemsPerPage - 1;
+    },
     pageCount() {
-      return Math.ceil(this.list.total / 10); // Điều chỉnh kích thước trang theo cần thiết
+      return Math.ceil(this.list.result.length / this.itemsPerPage);
     },
   },
   async mounted() {
