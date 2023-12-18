@@ -2,22 +2,39 @@
   <h1 style="font-size: 30px">Quản lý thông tin người dùng</h1>
   <v-container>
     <v-btn @click="showAddDialog">Thêm mới</v-btn>
+    <v-table class="table1">
+      <colgroup>
+        <col class="a" style="width: 10%" />
+        <col class="b" style="width: 20%" />
+        <col class="c" style="width: 10%" />
+        <col class="d" style="width: 20%" />
+        <col class="e" style="width: 20%" />
+        <col class="f" style="width: 20%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-left a">STT</th>
+          <th class="text-left b">UserName</th>
 
-    <!-- Bảng để hiển thị danh sách User -->
-    <v-data-table :items="list.result" :headers="headers">
-      <template v-slot:item="props">
-        <tr :key="props.item.IDUser">
-          <td>{{ props.item.IDUser }}</td>
-          <td>{{ props.item.UserName }}</td>
-          <td>{{ props.item.Email }}</td>
-          <td>{{ props.item.Birthday }}</td>
-          <td>{{ props.item.Phone }}</td>
+          <th class="text-left d">Email</th>
+          <th class="text-left e">Birthday</th>
+          <th class="text-left f">Phone</th>
+          <th class="text-left g">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(user, index) in list.result" :key="user.IDUser">
+          <td>{{ index + 1 }}</td>
+          <td>{{ user.UserName }}</td>
+          <td>{{ user.Email }}</td>
+          <td>{{ user.Birthday }}</td>
+          <td>{{ user.Phone }}</td>
           <td>
-            <v-btn @click="confirmDelete(props.item)">Xóa</v-btn>
+            <v-btn @click="confirmDelete(user)">Xóa</v-btn>
           </td>
         </tr>
-      </template>
-    </v-data-table>
+      </tbody>
+    </v-table>
 
     <!-- Hộp thoại Thêm mới user -->
     <v-dialog v-model="isAddDialogVisible">
@@ -267,5 +284,49 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.table1 {
+  background-color: #f2f2f2; /* Màu xám nhạt */
+  border-collapse: collapse; /* Gộp các đường biên */
+  width: 100%; /* Chiều rộng 100% của bảng */
+}
+.table1 tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* Màu nền của dòng chẵn */
+}
+
+.table1 tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Màu nền của dòng lẻ */
+}
+.table1 td,
+.table1 th {
+  border: 1px solid #dddddd; /* Màu viền của ô */
+  padding: 8px; /* Khoảng cách giữa nội dung và viền */
+  text-align: left; /* Căn lề văn bản sang trái */
+}
+.table1 th {
+  color: #333333; /* Màu chữ cho tiêu đề */
+}
+.table1 v-btn {
+  color: #ffffff; /* Màu chữ cho nút */
+  background-color: #ff0000; /* Màu nền cho nút (ví dụ: đỏ) */
+  border: none; /* Xóa đường viền của nút */
+  padding: 8px 16px; /* Kích thước của nút */
+  cursor: pointer; /* Hiển thị con trỏ khi rê chuột vào nút */
+}
+.table1 th {
+  font-weight: bold; /* In đậm */
+  color: #333333; /* Màu chữ cho tiêu đề */
+}
+.table1 tbody tr:hover {
+  background-color: #e0e0e0; /* Màu nền khi hover */
+}
+.table1 v-btn {
+  transition: background-color 0.3s ease; /* Hiệu ứng chuyển động trong 0.3 giây */
+}
+.table1 v-btn:hover {
+  background-color: #cc0000; /* Màu nền khi hover (đỏ đậm hơn) */
+}
+.table1 th {
+  border-bottom: 2px solid #dddddd; /* Biên dưới cho tiêu đề cột */
 }
 </style>

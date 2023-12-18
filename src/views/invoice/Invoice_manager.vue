@@ -50,9 +50,9 @@
 
         <thead>
           <tr>
-            <th class="text-left">ID BILL</th>
+            <th class="text-left">STT</th>
             <th class="text-left">Trạng thái</th>
-            <th class="text-left">Gía</th>
+            <th class="text-left">Giá(VNĐ)</th>
             <th class="text-left">Khách hàng</th>
             <th class="text-left">Tên sách</th>
             <th class="text-left">Ngày tạo</th>
@@ -60,9 +60,9 @@
         </thead>
         <tbody>
           <!-- Lặp qua các sách trong danh sách -->
-          <tr v-for="item in list.result" :key="item.IDBill">
+          <tr v-for="(item, index) in list.result" :key="item.IDBill">
             <!-- Hiển thị thông tin sách -->
-            <td class="text-left">{{ item.IDBill }}</td>
+            <td class="text-left">{{ index + 1 }}</td>
             <td class="text-left">{{ item.Status }}</td>
             <td class="text-left">{{ item.PriceTotal }}</td>
             <td class="text-left">{{ item.UserName }}</td>
@@ -156,7 +156,11 @@ export default {
     async fetchbill() {
       try {
         const response = await axios.get("http://localhost:5000/bill/get_list");
-        this.list = response.data;
+        // this.list = response.data;
+        this.list.result = response.data.map((item, index) => ({
+          ...item,
+          index: index + 1,
+        }));
       } catch (error) {
         console.error("Lỗi khi lấy danh sách bill: ", error);
       }

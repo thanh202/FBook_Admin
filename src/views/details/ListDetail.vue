@@ -29,11 +29,11 @@
           <table>
             <thead>
               <tr>
-                <th class="text-left">IDBook</th>
-                <th class="text-left">Ten sách</th>
+                <th class="text-left">STT</th>
+                <th class="text-left">Tên sách</th>
                 <th class="text-left">Tác giả</th>
                 <th class="text-left">Năm xuất bản</th>
-                <th class="text-left">Gía sách(VNĐ)</th>
+                <th class="text-left">Giá sách(VNĐ)</th>
                 <th class="text-left">Mô tả</th>
                 <th class="text-left">Nội dung</th>
                 <th class="text-left">Ảnh</th>
@@ -44,10 +44,15 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Lặp qua các sách trong danh sách -->
-              <tr v-for="item in list.result" :key="item.IDBook">
-                <!-- Hiển thị thông tin sách -->
-                <td class="text-left">{{ item.IDBook }}</td>
+              <!-- <tr v-for="(item, index) in list.result" :key="item.IDBook"> -->
+              <tr
+                v-for="(item, index) in list.result.slice(
+                  startIndex,
+                  endIndex + 1
+                )"
+                :key="item.IDBook"
+              >
+                <td class="text-left">{{ index + 1 }}</td>
                 <td class="text-left">{{ item.BookName }}</td>
                 <td class="text-left">{{ item.Author }}</td>
                 <td class="text-left">{{ item.PublishYear }}</td>
@@ -95,7 +100,7 @@
           </table>
         </v-table>
 
-        <v-pagination v-model="page" :length="pageCount"> </v-pagination>
+        <v-pagination v-model="page" :length="pageCount"></v-pagination>
       </v-card>
     </div>
     <!-- các dialog -->
@@ -198,7 +203,7 @@
     </v-dialog>
 
     <!-- Hộp thoại Sửa sách -->
-    //
+
     <!-- Hộp thoại Sửa sách -->
 
     <v-dialog v-model="isEditDialogVisible" class="edit-dialog">
@@ -299,7 +304,6 @@
       </v-form>
     </v-dialog>
 
-    //
     <!-- // xóa -->
     <v-dialog v-model="isDeleteDialogVisible">
       <v-card class="d-flex align-center mx-auto">
@@ -335,6 +339,8 @@ export default {
   name: "App",
   data() {
     return {
+      page: 1, // Trang hiện tại
+      itemsPerPage: 5, // Số lượng mục trên mỗi trang
       // Các thuộc tính dữ liệu ban đầu
       searchResultVisible: false,
       list: { result: [] },
@@ -342,6 +348,7 @@ export default {
       isDeleteDialogVisible: false,
       selectedImage: null,
       errorDialog: false,
+      bookIndex: 0,
       errorMessages: null,
       isDescriptionDialogVisible: false,
       selectedDescription: "",
@@ -372,6 +379,17 @@ export default {
       },
       types: [], // Danh sách loại
     };
+  },
+  computed: {
+    startIndex() {
+      return (this.page - 1) * this.itemsPerPage;
+    },
+    endIndex() {
+      return this.startIndex + this.itemsPerPage - 1;
+    },
+    pageCount() {
+      return Math.ceil(this.list.result.length / this.itemsPerPage);
+    },
   },
 
   async mounted() {
@@ -556,7 +574,7 @@ export default {
         this.showErrorDialog("Vui lòng nhập Discription");
         return;
       }
-      if (this.newBook.Content.length <= 5000) {
+      if (this.newBook.Content.length <= 2000) {
         this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
         return;
       }
@@ -567,7 +585,7 @@ export default {
       // Validate if PublishYear is a number greater than 0
       if (
         isNaN(Number(this.newBook.PublishYear)) ||
-        Number(this.newBook.PublishYear) <= 0
+        Number(this.newBook.PublishYear) <= 1500
       ) {
         this.showErrorDialog("Vui lòng nhập năm xuất bản hợp lệ.");
         return;
@@ -576,7 +594,7 @@ export default {
       // Validate if PriceBook is a number greater than 0
       if (
         isNaN(Number(this.newBook.PriceBook)) ||
-        Number(this.newBook.PriceBook) <= 0
+        Number(this.newBook.PriceBook) <= 20000
       ) {
         this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
         return;
@@ -703,7 +721,7 @@ export default {
         this.showErrorDialog("Vui lòng nhập Discription");
         return;
       }
-      if (this.editingItem.Content.length <= 5000) {
+      if (this.editingItem.Content.length <= 2000) {
         this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
         return;
       }
@@ -765,9 +783,11 @@ export default {
           updatedData
         );
 
+        toast.success("Sửa sách thành công!");
         // Cập nhật sau khi sửa sách thành công
         if (response.status === 200) {
           // Đóng hộp thoại Sửa sách
+
           toast.success("Sửa sách thành công!");
           this.isEditDialogVisible = false;
 
