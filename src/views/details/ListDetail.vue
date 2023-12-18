@@ -56,7 +56,7 @@
                 <td class="text-left">{{ item.BookName }}</td>
                 <td class="text-left">{{ item.Author }}</td>
                 <td class="text-left">{{ item.PublishYear }}</td>
-                <td class="text-left">{{ item.PriceBook }}</td>
+                <td class="text-left">{{ formatCurrency(item.PriceBook) }}</td>
                 <td class="text-left wide-column">
                   <div @click="showDescriptionDialog(item.Discription)">
                     {{ truncateDescription(item.Discription, 2) }}
@@ -424,6 +424,13 @@ export default {
     }
   },
   methods: {
+    formatCurrency(value) {
+      // Sử dụng Intl.NumberFormat để định dạng số theo định dạng tiền tệ
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(value);
+    },
     exportToExcel() {
       const data = this.list.result;
       const ws = XLSX.utils.json_to_sheet(data);

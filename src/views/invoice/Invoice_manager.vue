@@ -64,7 +64,7 @@
             <!-- Hiển thị thông tin sách -->
             <td class="text-left">{{ index + 1 }}</td>
             <td class="text-left">{{ item.Status }}</td>
-            <td class="text-left">{{ item.PriceTotal }}</td>
+            <td class="text-left">{{ formatCurrency(item.PriceTotal) }}</td>
             <td class="text-left">{{ item.UserName }}</td>
             <td class="text-left">{{ item.BookName }}</td>
             <td class="text-left">{{ item.Create_at }}</td>
@@ -115,6 +115,13 @@ export default {
     }
   },
   methods: {
+    formatCurrency(value) {
+      // Sử dụng Intl.NumberFormat để định dạng số theo định dạng tiền tệ
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(value);
+    },
     exportToExcel() {
       const data = this.list.result;
       const ws = XLSX.utils.json_to_sheet(data);

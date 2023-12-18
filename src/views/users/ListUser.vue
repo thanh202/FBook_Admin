@@ -9,7 +9,6 @@
         <col class="c" style="width: 10%" />
         <col class="d" style="width: 20%" />
         <col class="e" style="width: 20%" />
-        <col class="f" style="width: 20%" />
       </colgroup>
       <thead>
         <tr>
@@ -19,7 +18,6 @@
           <th class="text-left d">Email</th>
           <th class="text-left e">Birthday</th>
           <th class="text-left f">Phone</th>
-          <th class="text-left g">Thao tác</th>
         </tr>
       </thead>
       <tbody>
@@ -29,9 +27,6 @@
           <td>{{ user.Email }}</td>
           <td>{{ user.Birthday }}</td>
           <td>{{ user.Phone }}</td>
-          <td>
-            <v-btn @click="confirmDelete(user)">Xóa</v-btn>
-          </td>
         </tr>
       </tbody>
     </v-table>
