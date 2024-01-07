@@ -20,7 +20,6 @@ const routes = [
         component: () => import("@/views/users/ListUser.vue"),
       },
       {
-
         path: "/list-admin",
         component: () => import("@/views/Adminss/admina.vue"),
       },
@@ -31,7 +30,22 @@ const routes = [
       {
         path: "/bill",
         component: () => import("@/views/invoice/Invoice_manager.vue"),
-
+      },
+      {
+        path: "/LICH",
+        component: () => import("@/views/Thongke/thongkethoengay.vue"),
+      },
+      {
+        path: "/chuong",
+        component: () => import("@/views/Chuongsach/Chuong.vue"),
+      },
+      {
+        path: "/feedback",
+        component: () => import("@/views/FeedBack/FeedBack.vue"),
+      },
+      {
+        path: "/thongbao",
+        component: () => import("@/views/thongbao/thongbao.vue"),
       },
     ],
   },

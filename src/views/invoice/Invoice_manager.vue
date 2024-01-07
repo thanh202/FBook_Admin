@@ -6,10 +6,10 @@
       <div class="tk">
         <input
           class="tim"
-          v-model="searchKeyword"
+          v-model="searchKeyworda"
           placeholder="Tìm kiếm sách"
         />
-        <v-btn class="bnt" color="primary" @click="searill(searchKeyword)"
+        <v-btn class="bnt" color="primary" @click="searill(searchKeyworda)"
           >Tìm kiếm</v-btn
         >
       </div>
@@ -56,6 +56,7 @@
             <th class="text-left">Khách hàng</th>
             <th class="text-left">Tên sách</th>
             <th class="text-left">Ngày tạo</th>
+            <th class="text-left">Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -72,6 +73,9 @@
             <td class="text-left">{{ item.UserName }}</td>
             <td class="text-left">{{ item.BookName }}</td>
             <td class="text-left">{{ item.Create_at }}</td>
+            <td>
+              <button>chi tiết</button>
+            </td>
           </tr>
         </tbody>
       </v-table>
@@ -144,7 +148,9 @@ export default {
     },
     async clear() {
       this.searchKeyword = null; // Đặt giá trị của ô tìm kiếm về rỗng;
-      await this.fetchbill();
+      this.searchKeyworda = null; // Đặt giá trị của ô tìm kiếm về rỗng;
+      let response = await axios.get("http://localhost:5000/bill/get_list");
+      this.list = response.data;
     },
     async searill(keyword) {
       try {
@@ -162,7 +168,7 @@ export default {
             this.searchResultVisible = true; // Hiển thị kết quả tìm kiếm
           } else {
             // Nếu không có dữ liệu, ẩn kết quả tìm kiếm
-            alert("k cos ");
+            alert("Không có dữ liệu");
             this.searchResultVisible = false;
           }
         } else {

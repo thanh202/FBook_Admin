@@ -1,6 +1,5 @@
 <template>
   <h1>Quản lý chi tiết sách</h1>
-
   <div>
     <!-- Thêm vào template -->
 
@@ -35,8 +34,9 @@
                 <th class="text-left">Năm xuất bản</th>
                 <th class="text-left">Giá sách(VNĐ)</th>
                 <th class="text-left">Mô tả</th>
-                <th class="text-left">Nội dung</th>
+                <th class="text-left">Trạng thái</th>
                 <th class="text-left">Ảnh</th>
+                <th class="text-left">Sao TB</th>
                 <th class="text-left">Ngày tạo</th>
                 <th class="text-left">Chương</th>
                 <th class="text-left">Loại</th>
@@ -63,13 +63,8 @@
                     <p class="Info">Chi tiết</p>
                   </div>
                 </td>
-                <td class="text-left wide-column">
-                  <div @click="showDescriptionDialog(item.Content)">
-                    {{ truncateDescription(item.Content, 2) }}
-                    <p class="Info">Chi tiết</p>
-                  </div>
-                </td>
-                <!-- <td class="text-left">{{ item.Content }}</td> -->
+                <td class="text-left">{{ item.status }}</td>
+
                 <!-- Hiển thị hình ảnh sách -->
 
                 <td @click="console.log(item.image)">
@@ -79,7 +74,7 @@
                     id="imgs"
                   ></v-img>
                 </td>
-
+                <td class="text-left">{{ item.averageRating }}</td>
                 <td class="text-left">{{ item.Create_at }}</td>
                 <td class="text-left">{{ item.Chapter }}</td>
                 <td class="text-left">{{ item.CatName }}</td>
@@ -105,7 +100,7 @@
     </div>
     <!-- các dialog -->
     <v-dialog v-model="isDescriptionDialogVisible" class="description-dialog">
-      <v-card class="cart" style="height: 90vh">
+      <v-card class="cart" style="height: 30vh">
         <v-card-title>
           <h1 style="margin: 0">Chi tiết sách</h1>
         </v-card-title>
@@ -115,7 +110,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+    <!--  -->
     <v-dialog v-model="isAddDialogVisible" class="add-dialog">
       <v-form ref="form">
         <v-card class="cart">
@@ -156,12 +151,20 @@
                 label="Mô tả"
               ></v-textarea>
             </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="newBook.Content"
-                label="Nội dung"
+            >
+            <!-- <v-col cols="12">
+              <v-text-field
+                v-model="newBook.status"
+                label="Status"
                 required
-              ></v-textarea>
+              ></v-text-field>
+            </v-col> -->
+            <v-col cols="12">
+              <label for="status">Status:</label>
+              <select v-model="newBook.status">
+                <option value="free">Miễn phí</option>
+                <option value="paid">Mất phí</option>
+              </select>
             </v-col>
             <v-col cols="6">
               <v-text-field
@@ -246,13 +249,21 @@
                 label="Mô tả"
               ></v-textarea>
             </v-col>
-            <v-col cols="12">
+            <!-- <v-col cols="12">
               <v-textarea
-                v-model="editingItem.Content"
-                label="Content"
+                v-model="editingItem.status"
+                label="status"
                 required
               ></v-textarea>
+            </v-col> -->
+            <v-col cols="12">
+              <label for="status">Status:</label>
+              <select v-model="editingItem.status">
+                <option value="free">Miễn phí</option>
+                <option value="paid">Mất phí</option>
+              </select>
             </v-col>
+
             <v-col cols="6">
               <v-text-field
                 v-model="editingItem.Chapter"
@@ -359,7 +370,7 @@ export default {
         PublishYear: "",
         PriceBook: "",
         Discription: "",
-        Content: "",
+        status: "",
         Chapter: "",
         Create_at: "",
       },
@@ -371,7 +382,7 @@ export default {
         PublishYear: "",
         PriceBook: "",
         Discription: "",
-        Content: "",
+        status: "",
         ImageBook: "",
         Create_at: "",
         Chapter: "",
@@ -407,6 +418,7 @@ export default {
           return Promise.reject(error);
         }
       );
+
       let responseTypes = await axios.get(
         "http://localhost:5000/Category/get_list"
       );
@@ -415,7 +427,12 @@ export default {
       let response = await axios.get("http://localhost:5000/Book/get_list");
       console.log("Server Response:", response.data);
 
-      // Log server response
+      // Lặp qua danh sách sách và lấy averageRating cho từng cuốn sách
+      for (const item of response.data.result) {
+        item.averageRating = await this.getAverageRating(item.IDBook);
+      }
+
+      // Gán dữ liệu vào list
       this.list = response.data;
       this.originalList = JSON.parse(JSON.stringify(response.data)); // Copy data
     } catch (error) {
@@ -423,7 +440,21 @@ export default {
       toast.success("Bạn chưa đăng nhập!");
     }
   },
+
   methods: {
+    // sao tb
+    async getAverageRating(idBook) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/FeedBack/average_rating/${idBook}`
+        );
+        return response.data.averageRating;
+      } catch (error) {
+        console.error("Lỗi khi lấy averageRating: ", error);
+        return "0.0000";
+      }
+    },
+
     formatCurrency(value) {
       // Sử dụng Intl.NumberFormat để định dạng số theo định dạng tiền tệ
       return new Intl.NumberFormat("vi-VN", {
@@ -519,7 +550,7 @@ export default {
       this.newBook.PublishYear = "";
       this.newBook.PriceBook = "";
       this.newBook.Discription = "";
-      this.newBook.Content = "";
+      this.newBook.status = "";
       this.newBook.Chapter = "";
       this.newBook.Create_at = "";
     },
@@ -563,6 +594,20 @@ export default {
     },
     // Thêm mới một sách
     async addNewBook() {
+      if (this.newBook.status === "free") {
+        this.newBook.status = "Miễn phí";
+        this.newBook.PriceBook = 0;
+      } else if (this.newBook.status === "paid") {
+        this.newBook.status = "Mất phí";
+        if (
+          isNaN(Number(this.newBook.PriceBook)) ||
+          Number(this.newBook.PriceBook) <= 20000
+        ) {
+          this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
+          return;
+        }
+      }
+
       if (!this.newBook.BookName) {
         this.showErrorDialog("Vui lòng nhập tên sách.");
         return;
@@ -581,12 +626,9 @@ export default {
         this.showErrorDialog("Vui lòng nhập Discription");
         return;
       }
-      if (this.newBook.Content.length <= 2000) {
-        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
-        return;
-      }
-      if (!this.newBook.Content) {
-        this.showErrorDialog("Vui lòng nhập Content");
+
+      if (!this.newBook.status) {
+        this.showErrorDialog("Vui lòng nhập status");
         return;
       }
       // Validate if PublishYear is a number greater than 0
@@ -601,7 +643,7 @@ export default {
       // Validate if PriceBook is a number greater than 0
       if (
         isNaN(Number(this.newBook.PriceBook)) ||
-        Number(this.newBook.PriceBook) <= 20000
+        Number(this.newBook.PriceBook) < 0
       ) {
         this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
         return;
@@ -634,7 +676,7 @@ export default {
           PublishYear: this.newBook.PublishYear,
           PriceBook: this.newBook.PriceBook,
           Discription: this.newBook.Discription,
-          Content: this.newBook.Content,
+          status: this.newBook.status,
           ImageBook: this.selectedImage,
           Chapter: this.newBook.Chapter,
           IDCat: this.newBook.IDCat,
@@ -657,7 +699,7 @@ export default {
           this.newBook.PublishYear = "";
           this.newBook.PriceBook = "";
           this.newBook.Discription = "";
-          this.newBook.Content = "";
+          this.newBook.status = "";
           this.newBook.Chapter = "";
           this.newBook.Create_at = "";
           this.selectedImage = response.data.imageUrl;
@@ -686,7 +728,7 @@ export default {
       this.editingItem.PublishYear = item.PublishYear;
       this.editingItem.PriceBook = item.PriceBook;
       this.editingItem.Discription = item.Discription;
-      this.editingItem.Content = item.Content;
+      this.editingItem.status = item.status;
       this.editingItem.ImageBook = item.ImageBook;
       this.editingItem.Create_at = item.Create_at;
       this.editingItem.Chapter = item.Chapter;
@@ -703,13 +745,26 @@ export default {
       this.editingItem.PublishYear = "";
       this.editingItem.PriceBook = "";
       this.editingItem.Discription = "";
-      this.editingItem.Content = "";
+      this.editingItem.status = "";
       this.editingItem.ImageBook = "";
       this.editingItem.Create_at = "";
       this.editingItem.Chapter = "";
       this.editingItem.IDCat = "";
     },
     async saveEditedItem() {
+      if (this.editingItem.status === "free") {
+        this.editingItem.status = "Miễn phí";
+        this.editingItem.PriceBook = 0;
+      } else if (this.editingItem.status === "paid") {
+        this.editingItem.status = "Mất phí";
+        if (
+          isNaN(Number(this.editingItem.PriceBook)) ||
+          Number(this.editingItem.PriceBook) <= 20000
+        ) {
+          this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
+          return;
+        }
+      }
       if (!this.editingItem.BookName) {
         this.showErrorDialog("Vui lòng nhập tên sách.");
         return;
@@ -728,11 +783,8 @@ export default {
         this.showErrorDialog("Vui lòng nhập Discription");
         return;
       }
-      if (this.editingItem.Content.length <= 2000) {
-        this.showErrorDialog("Mô tả sách phải có độ dài lớn hơn 5000 ký tự.");
-        return;
-      }
-      if (!this.editingItem.Content) {
+
+      if (!this.editingItem.status) {
         this.showErrorDialog("Vui lòng nhập Discription");
         return;
       }
@@ -749,7 +801,7 @@ export default {
       // Validate if PriceBook is a number greater than 0
       if (
         isNaN(Number(this.editingItem.PriceBook)) ||
-        Number(this.editingItem.PriceBook) <= 0
+        Number(this.editingItem.PriceBook) < 0
       ) {
         this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
         return;
@@ -777,7 +829,7 @@ export default {
           PublishYear: this.editingItem.PublishYear,
           PriceBook: this.editingItem.PriceBook,
           Discription: this.editingItem.Discription,
-          Content: this.editingItem.Content,
+          status: this.editingItem.status,
           ImageBook: this.selectedImage || this.editingItem.ImageBook,
           Create_at: this.editingItem.Create_at,
           Chapter: this.editingItem.Chapter,
@@ -826,6 +878,12 @@ export default {
       try {
         const response = await axios.get("http://localhost:5000/Book/get_list");
         this.list = response.data;
+        for (const item of this.list.result) {
+          item.averageRating = await this.getAverageRating(item.IDBook);
+          console.log(
+            `Average Rating for Book ${item.BookName}: ${item.averageRating}`
+          );
+        }
       } catch (error) {
         console.error("Lỗi khi lấy danh sách sách: ", error);
       }

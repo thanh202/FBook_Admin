@@ -23,6 +23,20 @@
           </v-list-item>
         </router-link>
       </v-list>
+
+      <v-list nav class="text-start">
+        <router-link to="/chuong">
+          <v-list-item
+            prepend-icon="mdi-bookmark-box"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý Chương</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+
       <v-list nav class="text-start">
         <router-link to="/book-category">
           <v-list-item
@@ -48,6 +62,18 @@
         </router-link>
       </v-list>
       <v-list nav class="text-start">
+        <router-link to="/feedback">
+          <v-list-item
+            prepend-icon="mdi-account-group"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >Quản lý FeedBack</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+      <v-list nav class="text-start">
         <router-link to="/bill">
           <v-list-item
             prepend-icon="mdi-calendar-range"
@@ -55,6 +81,19 @@
           >
             <v-list-item-title style="margin-left: 10px; font-weight: bold"
               >Quản lý hóa đơn</v-list-item-title
+            >
+          </v-list-item>
+        </router-link>
+      </v-list>
+
+      <v-list nav class="text-start">
+        <router-link to="/LICH">
+          <v-list-item
+            prepend-icon="mdi-calendar-range"
+            @click="console.log('clicked')"
+          >
+            <v-list-item-title style="margin-left: 10px; font-weight: bold"
+              >LICHG</v-list-item-title
             >
           </v-list-item>
         </router-link>
@@ -89,7 +128,9 @@
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       </template>
       <template v-slot:append>
-        <v-btn icon="mdi-bell"></v-btn>
+        <router-link to="/thongbao">
+          <v-btn icon="mdi-bell"></v-btn>
+        </router-link>
       </template>
     </v-app-bar>
     <v-main>

@@ -3,134 +3,135 @@
   <div>
     <v-btn @click="showAddDialog" color="primary">Thêm mới</v-btn>
 
-    <v-table class="table1">
-      <colgroup>
-        <col class="a" style="width: 10%" />
-        <col class="b" style="width: 20%" />
-        <col class="c" style="width: 10%" />
-        <col class="d" style="width: 10%" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="text-left a">STT</th>
-          <th class="text-left b">Loại</th>
-          <th class="text-left f">Ảnh</th>
-          <th class="text-left d">Thao Tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(Category, index) in list.result" :key="Category.IDCat">
-          <td>{{ index + 1 }}</td>
-          <td>{{ Category.CatName }}</td>
+    <v-card class="mt-6" width="100%">
+      <table class="table1">
+        <colgroup>
+          <col class="a" style="width: 41.33%" />
+          <col class="b" style="width: 25.33%" />
+          <col class="c" style="width: 26.33%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-left a">IDBook</th>
+            <th class="text-left b">Tên sách</th>
+            <th class="text-left c">thao tác</th>
+          </tr>
+        </thead>
+        <!-- ... phần còn lại của cấu trúc bảng của bạn ... -->
+      </table>
+      <v-data-table
+        :headers="tableHeaders"
+        :items="list.result"
+        :items-per-page="perPage"
+        :page.sync="page"
+      >
+        <template v-slot:item.img="{ item }">
+          <v-img
+            :src="'http://localhost:5000/' + item.img"
+            width="50"
+            height="50"
+          ></v-img>
+        </template>
 
-          <td @click="console.log(Category.image)">
-            <v-img
-              style="width: 6vh"
-              :src="'http://localhost:5000/' + Category.img"
-              alt="Hình ảnh Loại"
-              id="imgs"
-            ></v-img>
-          </td>
-          <td>
-            <v-icon @click="editItem(Category)" class="mr-2" color="primary">
-              mdi-pencil
-            </v-icon>
-            <v-icon @click="confirmDelete(Category)" color="error">
-              mdi-delete
-            </v-icon>
-          </td>
-        </tr>
-      </tbody>
+        <template v-slot:item.actions="{ item }">
+          <v-icon @click="editItem(item)" class="mr-2" color="primary">
+            mdi-pencil
+          </v-icon>
+          <v-icon @click="confirmDelete(item)" color="error">
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-data-table>
 
-      <!-- dialog -->
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </v-card>
 
-      <v-dialog v-model="isAddDialogVisible">
-        <v-card>
-          <v-card-title>Thêm mới danh mục</v-card-title>
-          <v-card-text>
-            <v-text-field
-              v-model="newCategory.CatName"
-              label="Tên loại"
-            ></v-text-field>
-            <v-file-input
-              @change="handleImageUpload"
-              label="Chọn ảnh"
-            ></v-file-input>
-            <v-img
-              v-if="selectedImage"
-              :src="'http://localhost:5000/' + selectedImage"
-              :width="imageSize"
-              :height="imageSize"
-            ></v-img>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="addNewCategory" color="primary">Thêm</v-btn>
-            <v-btn @click="closeAddDialog">Hủy</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <!-- daloig -->
 
-      <v-dialog v-model="isEditDialogVisible">
-        <v-card>
-          <v-card-title>Sửa danh mục</v-card-title>
-          <v-card-text>
-            <v-text-field
-              v-model="editingItem.CatName"
-              label="Tên loại"
-            ></v-text-field>
-            <v-file-input
-              @change="handleImageUpload"
-              label="Chọn ảnh"
-            ></v-file-input>
-            <v-img
-              v-if="editingItem.img"
-              :src="'http://localhost:5000/' + editingItem.img"
-              :width="imageSize"
-              :height="imageSize"
-            ></v-img>
-            <v-img
-              v-if="selectedImage"
-              :src="'http://localhost:5000/' + selectedImage"
-              :width="imageSize"
-              :height="imageSize"
-            ></v-img>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="saveEditedItem" color="primary">Lưu</v-btn>
-            <v-btn @click="closeEditDialog">Hủy</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <!-- delete -->
-      <v-dialog v-model="isDeleteDialogVisible">
-        <v-card class="d-flex align-center mx-auto">
-          <v-card-title>Xác nhận xóa</v-card-title>
-          <v-card-text>Bạn có chắc muốn xóa mục này không?</v-card-text>
-          <v-card-actions>
-            <v-btn @click="deleteItem" color="error">Xóa</v-btn>
-            <v-btn @click="closeDeleteDialog">Hủy</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <!-- Error dialog -->
-      <v-dialog v-model="errorDialog" max-width="500px">
-        <v-card>
-          <v-card-title class="headline"> Thông Báo Lỗi </v-card-title>
-          <v-card-text>{{ errorMessages }}</v-card-text>
-          <v-card-actions>
-            <v-btn @click="closeErrorDialog">Đóng</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-table>
+    <v-dialog v-model="isAddDialogVisible">
+      <v-card>
+        <v-card-title>Thêm mới danh mục</v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="newCategory.CatName"
+            label="Tên loại"
+          ></v-text-field>
+          <v-file-input
+            @change="handleImageUpload"
+            label="Chọn ảnh"
+          ></v-file-input>
+          <v-img
+            v-if="selectedImage"
+            :src="'http://localhost:5000/' + selectedImage"
+            :width="imageSize"
+            :height="imageSize"
+          ></v-img>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="addNewCategory" color="primary">Thêm</v-btn>
+          <v-btn @click="closeAddDialog">Hủy</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="isEditDialogVisible">
+      <v-card>
+        <v-card-title>Sửa danh mục</v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="editingItem.CatName"
+            label="Tên loại"
+          ></v-text-field>
+          <v-file-input
+            @change="handleImageUpload"
+            label="Chọn ảnh"
+          ></v-file-input>
+          <v-img
+            v-if="editingItem.img"
+            :src="'http://localhost:5000/' + editingItem.img"
+            :width="imageSize"
+            :height="imageSize"
+          ></v-img>
+          <v-img
+            v-if="selectedImage"
+            :src="'http://localhost:5000/' + selectedImage"
+            :width="imageSize"
+            :height="imageSize"
+          ></v-img>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="saveEditedItem" color="primary">Lưu</v-btn>
+          <v-btn @click="closeEditDialog">Hủy</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- xoa -->
+    <v-dialog v-model="isDeleteDialogVisible">
+      <v-card class="d-flex align-center mx-auto">
+        <v-card-title>Xác nhận xóa</v-card-title>
+        <v-card-text>Bạn có chắc muốn xóa mục này không?</v-card-text>
+        <v-card-actions>
+          <v-btn @click="deleteItem" color="error">Xóa</v-btn>
+          <v-btn @click="closeDeleteDialog">Hủy</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Dialog hiển thị thông báo lỗi -->
+    <v-dialog v-model="errorDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline"> Thông Báo Lỗi </v-card-title>
+        <v-card-text>{{ errorMessages }}</v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeErrorDialog">Đóng</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-
 export default {
   name: "App",
   data() {
@@ -173,7 +174,6 @@ export default {
         }
         return config;
       });
-
       let response = await axios.get("http://localhost:5000/Category/get_list");
       this.list = response.data;
       this.pageCount = Math.ceil(this.list.result.length / this.perPage);
@@ -182,53 +182,56 @@ export default {
       toast.success("Bạn chưa đăng nhập!");
     }
   },
-
   methods: {
+    // Hiển thị hộp thoại Thêm mới danh mục
     showAddDialog() {
       this.isAddDialogVisible = true;
     },
 
+    // Đóng hộp thoại Thêm mới danh mục
     closeAddDialog() {
       this.isAddDialogVisible = false;
       this.newCategory.CatName = "";
     },
-
     showErrorDialog(message) {
       this.errorMessages = message;
       this.errorDialog = true;
     },
-
+    // Đóng dialog
     closeErrorDialog() {
       this.errorMessages = null;
       this.errorDialog = false;
     },
-
     showDeleteDialog(item) {
       this.itemToDelete = item;
       this.isDeleteDialogVisible = true;
     },
 
+    // Đóng hộp thoại xác nhận xóa
     closeDeleteDialog() {
       this.isDeleteDialogVisible = false;
       this.itemToDelete = null;
     },
 
+    // Xác nhận xóa một danh mục
     confirmDelete(item) {
       this.showDeleteDialog(item);
     },
-
     handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
         const formData = new FormData();
         formData.append("image", file);
 
+        // Gửi yêu cầu HTTP POST để tải lên hình ảnh lên server
         axios
           .post("http://localhost:5000/Category/upload", formData)
           .then((response) => {
             if (response.status === 200) {
+              // Lưu đường dẫn ảnh đã tải lên
               this.selectedImage = response.data.imageUrl;
 
+              // Hiển thị ảnh đã chọn
               const addDialogImg = this.$refs.addDialogImg;
               const editDialogImg = this.$refs.editDialogImg;
               const editDialogSelectedImg = this.$refs.editDialogSelectedImg;
@@ -252,6 +255,7 @@ export default {
       }
     },
 
+    // Thêm mới một danh mục
     async addNewCategory() {
       try {
         if (!this.newCategory.CatName || !this.selectedImage) {
@@ -263,38 +267,43 @@ export default {
           img: this.selectedImage,
         };
 
+        // Gửi yêu cầu HTTP POST để thêm mới một danh mục
         const response = await axios.post(
           "http://localhost:5000/Category/add",
           newData
         );
 
+        // Thêm sau khi thêm mới danh mục thành công
         if (response.status === 200) {
           toast.success("Thêm mới thành công!");
+          // Đóng hộp thoại Thêm mới danh mục và cập nhật danh sách danh mục local
           this.isAddDialogVisible = false;
           this.newCategory.CatName = "";
-          this.selectedImage = response.data.imageUrl;
+          this.selectedImage = response.data.imageUrl; // Cập nhật đường dẫn ảnh
           this.list.result.push(response.data.result);
           this.editingItem.img = "";
-          await this.fetchCatList();
         }
       } catch (error) {
         console.error("Lỗi khi thêm mới: ", error);
       }
     },
 
-    editItem(Category) {
-      this.editingItem.IDCat = Category.IDCat;
-      this.editingItem.CatName = Category.CatName;
-      this.editingItem.img = Category.img;
+    // Thiết lập hộp thoại Sửa danh mục
+    editItem(item) {
+      this.editingItem.IDCat = item.IDCat;
+      this.editingItem.CatName = item.CatName;
+      this.editingItem.img = item.img; // Điền vào đường dẫn ảnh hiện tại
       this.isEditDialogVisible = true;
     },
 
+    // Đóng hộp thoại Sửa danh mục
     closeEditDialog() {
       this.isEditDialogVisible = false;
       this.editingItem.IDCat = null;
       this.editingItem.CatName = "";
     },
 
+    // Lưu sửa danh mục
     async saveEditedItem() {
       try {
         if (!this.editingItem.CatName) {
@@ -304,24 +313,27 @@ export default {
         const updatedData = {
           IDCat: this.editingItem.IDCat,
           CatName: this.editingItem.CatName,
-          img: this.selectedImage || this.editingItem.img,
+          img: this.selectedImage || this.editingItem.img, // Sử dụng đường dẫn mới nếu có, ngược lại giữ nguyên đường dẫn hiện tại
         };
 
+        // Gửi yêu cầu HTTP PUT để cập nhật một danh mục tồn tại
         const response = await axios.put(
           `http://localhost:5000/Category/update`,
           updatedData
         );
 
         if (response.status === 200) {
+          // Tìm mục cần cập nhật trong danh sách và cập nhật nó
           toast.success("Sửa loại thành công!");
           const updatedIndex = this.list.result.findIndex(
             (item) => item.IDCat === this.editingItem.IDCat
           );
-          await this.fetchCatList();
+
           if (updatedIndex !== -1) {
             this.list.result[updatedIndex] = response.data.result;
           }
 
+          // Đóng hộp thoại Sửa danh mục
           this.isEditDialogVisible = false;
           this.editingItem.IDCat = null;
           this.editingItem.CatName = "";
@@ -332,44 +344,43 @@ export default {
       }
     },
 
+    // Xác nhận xóa một danh mục
+    // confirmDelete(item) {
+    //   this.itemToDelete = item;
+    //   this.deleteItem();
+    // },
+
+    // Xóa một danh mục
     async deleteItem() {
       if (this.itemToDelete) {
         try {
+          // Gửi yêu cầu HTTP DELETE để xóa một danh mục
           const response = await axios.delete(
             `http://localhost:5000/Category/delete/${this.itemToDelete.IDCat}`
           );
 
           if (response.status === 200) {
             toast.success("Xóa loại thành công!");
+            // Xóa thành công khỏi cơ sở dữ liệu, bây giờ hãy cập nhật danh sách cục bộ
             this.list.result = this.list.result.filter(
               (item) => item.IDCat !== this.itemToDelete.IDCat
             );
 
             this.itemToDelete = null;
           } else {
+            // Xử lý trường hợp xóa khỏi cơ sở dữ liệu thất bại
             console.error("Không thể xóa mục khỏi cơ sở dữ liệu");
             this.showErrorDialog("Loại đang được dùng trong Book");
-            this.itemToDelete = null;
+            this.itemToDelete = null; // Xóa mục khỏi biến itemToDelete để ngăn chặn các thử nghiệm xóa tiếp theo
           }
         } catch (error) {
           this.showErrorDialog("Loại đang được dùng trong Book");
           console.error("Lỗi khi xóa: ", error);
-          this.itemToDelete = null;
+          this.itemToDelete = null; // Xóa mục khỏi biến itemToDelete để ngăn chặn các thử nghiệm xóa tiếp theo
         }
       }
       this.closeDeleteDialog();
     },
-    async fetchCatList() {
-      try {
-        let response = await axios.get(
-          "http://localhost:5000/Category/get_list"
-        );
-        this.list = response.data;
-      } catch (error) {
-        console.error("Lỗi trong quá trình yêu cầu danh sách Category:", error);
-      }
-    },
-
     updatePageCount() {
       this.pageCount = Math.ceil(this.list.result.length / this.perPage);
     },
@@ -380,10 +391,12 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
   margin-top: 60px;
 }
 #imgs {

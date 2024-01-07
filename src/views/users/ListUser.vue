@@ -1,7 +1,6 @@
 <template>
   <h1 style="font-size: 30px">Quản lý thông tin người dùng</h1>
   <v-container>
-    <v-btn @click="showAddDialog">Thêm mới</v-btn>
     <v-table class="table1">
       <colgroup>
         <col class="a" style="width: 10%" />
@@ -14,7 +13,7 @@
         <tr>
           <th class="text-left a">STT</th>
           <th class="text-left b">UserName</th>
-
+          <th class="text-left">Ảnh</th>
           <th class="text-left d">Email</th>
           <th class="text-left e">Birthday</th>
           <th class="text-left f">Phone</th>
@@ -24,6 +23,16 @@
         <tr v-for="(user, index) in list.result" :key="user.IDUser">
           <td>{{ index + 1 }}</td>
           <td>{{ user.UserName }}</td>
+
+          <td @click="console.log(user.image)">
+            <v-img
+              style="width: 6vh"
+              :src="'http://localhost:5000/' + user.img"
+              alt="Hình ảnh user"
+              id="imgs"
+            ></v-img>
+          </td>
+
           <td>{{ user.Email }}</td>
           <td>{{ user.Birthday }}</td>
           <td>{{ user.Phone }}</td>
@@ -32,10 +41,19 @@
     </v-table>
 
     <!-- Hộp thoại Thêm mới user -->
-    <v-dialog v-model="isAddDialogVisible">
+    <!-- <v-dialog v-model="isAddDialogVisible">
       <v-card>
         <v-card-text>
           <v-text-field v-model="newUser.UserName" label="Tên "></v-text-field>
+          <v-col cols="6">
+            <input type="file" accept="image/*" @change="handleImageUpload" />
+            <v-img
+              v-if="selectedImage"
+              :src="'http://localhost:5000/' + selectedImage"
+              alt="Hình ảnh đã chọn"
+              id="img2"
+            ></v-img>
+          </v-col>
           <v-text-field
             v-model="newUser.PassWord"
             label="Mật khẩu"
@@ -53,9 +71,9 @@
           <v-btn @click="closeAddDialog">Hủy</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
     <!-- diloag xoa -->
-    <v-dialog v-model="isDeleteDialogVisible">
+    <!-- <v-dialog v-model="isDeleteDialogVisible">
       <v-card class="d-flex align-center mx-auto">
         <v-card-title>Xác nhận xóa</v-card-title>
         <v-card-text>Bạn có chắc muốn xóa mục này không?</v-card-text>
@@ -64,7 +82,7 @@
           <v-btn @click="closeDeleteDialog">Hủy</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
     <!-- thong bao loi -->
     <v-dialog v-model="errorDialog" max-width="500px">
       <v-card>
@@ -90,15 +108,16 @@ export default {
       isAddDialogVisible: false,
       errorDialog: false,
       errorMessages: null,
+      selectedImage: null,
       due: null,
       isDeleteDialogVisible: false,
-      newUser: {
-        UserName: "",
-        PassWord: "",
-        Email: "",
-        Birthday: "",
-        Phone: "",
-      },
+      // newUser: {
+      //   UserName: "",
+      //   PassWord: "",
+      //   Email: "",
+      //   Birthday: "",
+      //   Phone: "",
+      // },
 
       headers: [
         { text: "IDUser", value: "IDUser" },
@@ -133,6 +152,44 @@ export default {
     }
   },
   methods: {
+    // handleImageUpload(event) {
+    //   const file = event.target.files[0];
+    //   if (file) {
+    //     const formData = new FormData();
+    //     formData.append("image", file);
+
+    //     // Gửi yêu cầu HTTP POST để tải lên hình ảnh lên server
+    //     axios
+    //       .post("http://localhost:5000/user/upload", formData)
+    //       .then((response) => {
+    //         if (response.status === 200) {
+    //           // Lưu đường dẫn ảnh đã tải lên
+    //           this.selectedImage = response.data.imageUrl;
+
+    //           // Hiển thị ảnh đã chọn
+    //           const addDialogImg = this.$refs.addDialogImg;
+    //           const editDialogImg = this.$refs.editDialogImg;
+    //           const editDialogSelectedImg = this.$refs.editDialogSelectedImg;
+
+    //           if (addDialogImg) {
+    //             addDialogImg.src = response.data.imageUrl;
+    //           }
+    //           if (editDialogImg) {
+    //             editDialogImg.src = response.data.imageUrl;
+    //           }
+    //           if (editDialogSelectedImg) {
+    //             editDialogSelectedImg.src = response.data.imageUrl;
+    //           }
+    //         } else {
+    //           console.error("Lỗi khi tải lên hình ảnh");
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.error("Lỗi khi tải lên hình ảnh:", error);
+    //       });
+    //   }
+    // },
+
     showAddDialog() {
       this.isAddDialogVisible = true;
     },
@@ -159,75 +216,75 @@ export default {
     confirmDelete(item) {
       this.showDeleteDialog(item);
     },
-    resetNewUser() {
-      this.newUser = {
-        UserName: "",
-        PassWord: "",
-        Email: "",
-        Birthday: "",
-        Phone: "",
-      };
-    },
-    async addNewUser() {
-      if (!this.validateUser()) {
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/user/add",
-          this.newUser
-        );
+    // resetNewUser() {
+    //   this.newUser = {
+    //     UserName: "",
+    //     PassWord: "",
+    //     Email: "",
+    //     Birthday: "",
+    //     Phone: "",
+    //   };
+    // },
+    // async addNewUser() {
+    //   if (!this.validateUser()) {
+    //     return;
+    //   }
+    //   try {
+    //     const response = await axios.post(
+    //       "http://localhost:5000/user/add",
+    //       this.newUser
+    //     );
 
-        if (response.status === 200) {
-          toast.success("Thêm người dùng thành công!");
-          this.isAddDialogVisible = false;
-          this.resetNewUser();
-          this.fetchUserList();
-        }
-      } catch (error) {
-        console.error("Lỗi khi thêm mới user: ", error);
-      }
-    },
-    validateUser() {
-      // Kiểm tra UserName
-      if (!this.newUser.UserName) {
-        this.showErrorDialog("UserName không được để trống.");
-        return false;
-      }
+    //     if (response.status === 200) {
+    //       toast.success("Thêm người dùng thành công!");
+    //       this.isAddDialogVisible = false;
+    //       this.resetNewUser();
+    //       this.fetchUserList();
+    //     }
+    //   } catch (error) {
+    //     console.error("Lỗi khi thêm mới user: ", error);
+    //   }
+    // },
+    // validateUser() {
+    //   // Kiểm tra UserName
+    //   if (!this.newUser.UserName) {
+    //     this.showErrorDialog("UserName không được để trống.");
+    //     return false;
+    //   }
 
-      // Kiểm tra Password
-      if (this.newUser.PassWord.length < 6) {
-        this.showErrorDialog("Password phải có ít nhất 6 ký tự.");
-        return false;
-      }
+    //   // Kiểm tra Password
+    //   if (this.newUser.PassWord.length < 6) {
+    //     this.showErrorDialog("Password phải có ít nhất 6 ký tự.");
+    //     return false;
+    //   }
 
-      // Kiểm tra Email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(this.newUser.Email)) {
-        this.showErrorDialog("Email không hợp lệ.");
-        return false;
-      }
+    //   // Kiểm tra Email
+    //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //   if (!emailRegex.test(this.newUser.Email)) {
+    //     this.showErrorDialog("Email không hợp lệ.");
+    //     return false;
+    //   }
 
-      // Kiểm tra Birthday (giả sử định dạng là yyyy-mm-dd)
-      const birthdayRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!birthdayRegex.test(this.newUser.Birthday)) {
-        this.showErrorDialog(
-          "Ngày sinh không hợp lệ. Định dạng phải là yyyy-mm-dd."
-        );
-        return false;
-      }
+    //   // Kiểm tra Birthday (giả sử định dạng là yyyy-mm-dd)
+    //   const birthdayRegex = /^\d{4}-\d{2}-\d{2}$/;
+    //   if (!birthdayRegex.test(this.newUser.Birthday)) {
+    //     this.showErrorDialog(
+    //       "Ngày sinh không hợp lệ. Định dạng phải là yyyy-mm-dd."
+    //     );
+    //     return false;
+    //   }
 
-      // Kiểm tra Phone (giả sử chỉ chấp nhận số điện thoại Việt Nam)
-      const phoneRegex = /^\+84\d{9,10}$/;
-      if (!phoneRegex.test(this.newUser.Phone)) {
-        this.showErrorDialog(
-          "Số điện thoại không hợp lệ. Định dạng phải là +840xxxxxxxx."
-        );
-        return false;
-      }
+    //   // Kiểm tra Phone (giả sử chỉ chấp nhận số điện thoại Việt Nam)
+    //   const phoneRegex = /^\+84\d{9,10}$/;
+    //   if (!phoneRegex.test(this.newUser.Phone)) {
+    //     this.showErrorDialog(
+    //       "Số điện thoại không hợp lệ. Định dạng phải là +840xxxxxxxx."
+    //     );
+    //     return false;
+    //   }
 
-      return true;
-    },
+    //   return true;
+    // },
     async fetchUserList() {
       try {
         let response = await axios.get("http://localhost:5000/user/get_list");
@@ -237,36 +294,36 @@ export default {
       }
     },
 
-    async deleteUser() {
-      if (this.itemToDelete) {
-        try {
-          const response = await axios.delete(
-            `http://localhost:5000/user/delete/${this.itemToDelete.IDUser}`
-          );
+    // async deleteUser() {
+    //   if (this.itemToDelete) {
+    //     try {
+    //       const response = await axios.delete(
+    //         `http://localhost:5000/user/delete/${this.itemToDelete.IDUser}`
+    //       );
 
-          if (response.status === 200) {
-            toast.success("Xóa người dùng thành công!");
-            this.list.result = this.list.result.filter(
-              (user) => user.IDUser !== this.itemToDelete.IDUser
-            );
-            this.itemToDelete = null;
-          } else {
-            this.showErrorDialog(
-              "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
-            );
-            console.error("Không thể xóa user khỏi cơ sở dữ liệu");
-            this.itemToDelete = null;
-          }
-        } catch (error) {
-          this.showErrorDialog(
-            "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
-          );
-          console.error("Lỗi khi xóa user: ", error);
-          this.itemToDelete = null;
-        }
-      }
-      this.closeDeleteDialog();
-    },
+    //       if (response.status === 200) {
+    //         toast.success("Xóa người dùng thành công!");
+    //         this.list.result = this.list.result.filter(
+    //           (user) => user.IDUser !== this.itemToDelete.IDUser
+    //         );
+    //         this.itemToDelete = null;
+    //       } else {
+    //         this.showErrorDialog(
+    //           "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
+    //         );
+    //         console.error("Không thể xóa user khỏi cơ sở dữ liệu");
+    //         this.itemToDelete = null;
+    //       }
+    //     } catch (error) {
+    //       this.showErrorDialog(
+    //         "Hay xoa Nguoi dung nay trong Bill va Favotite truoc"
+    //       );
+    //       console.error("Lỗi khi xóa user: ", error);
+    //       this.itemToDelete = null;
+    //     }
+    //   }
+    //   this.closeDeleteDialog();
+    // },
   },
 };
 </script>
