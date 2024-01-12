@@ -162,8 +162,8 @@
             <v-col cols="12">
               <label for="status">Status:</label>
               <select v-model="newBook.status">
-                <option value="free">Miễn phí</option>
-                <option value="paid">Mất phí</option>
+                <option value="Miễn phí">Miễn phí</option>
+                <option value="Mất phí">Mất phí</option>
               </select>
             </v-col>
             <v-col cols="6">
@@ -257,10 +257,11 @@
               ></v-textarea>
             </v-col> -->
             <v-col cols="12">
+              <!-- <v-text-field st v-model="editingItem.status"></v-text-field> -->
               <label for="status">Status:</label>
               <select v-model="editingItem.status">
-                <option value="free">Miễn phí</option>
-                <option value="paid">Mất phí</option>
+                <option value="Miễn phí">Miễn phí</option>
+                <option value="Mất phí">Mất phí</option>
               </select>
             </v-col>
 
@@ -480,21 +481,32 @@ export default {
           console.log("Dữ liệu tìm kiếm:", response.data);
 
           // Kiểm tra xem response.data có phải là mảng không
-          if (Array.isArray(response.data) && response.data.length > 0) {
-            this.list.result = response.data;
-            this.searchResultVisible = true; // Hiển thị kết quả tìm kiếm
+          if (Array.isArray(response.data)) {
+            if (response.data.length > 0) {
+              // Nếu có dữ liệu, gán vào this.list.result và hiển thị kết quả tìm kiếm
+              this.list.result = response.data;
+              this.searchResultVisible = true;
+            } else {
+              // Nếu không có dữ liệu, ẩn kết quả tìm kiếm và log thông báo
+              this.searchResultVisible = false;
+              toast.error("Không có sách");
+              console.log("Không có kết quả tìm kiếm.");
+            }
           } else {
-            // Nếu không có dữ liệu, ẩn kết quả tìm kiếm
+            // Nếu không phải là mảng, ẩn kết quả tìm kiếm và log thông báo
             this.searchResultVisible = false;
+            console.log("Dữ liệu tìm kiếm không hợp lệ.");
           }
         } else {
+          // Nếu không có từ khóa, fetch danh sách sách và ẩn kết quả tìm kiếm
           await this.fetchBookList();
-          this.searchResultVisible = false; // Ẩn kết quả tìm kiếm
+          this.searchResultVisible = false;
         }
       } catch (error) {
         console.error("Lỗi khi tìm kiếm sách: ", error);
       }
     },
+
     showDescriptionDialog(description) {
       this.selectedDescription = description;
       this.isDescriptionDialogVisible = true;
@@ -594,10 +606,10 @@ export default {
     },
     // Thêm mới một sách
     async addNewBook() {
-      if (this.newBook.status === "free") {
+      if (this.newBook.status === "Miễn phí") {
         this.newBook.status = "Miễn phí";
         this.newBook.PriceBook = 0;
-      } else if (this.newBook.status === "paid") {
+      } else if (this.newBook.status === "Mất phí") {
         this.newBook.status = "Mất phí";
         if (
           isNaN(Number(this.newBook.PriceBook)) ||
@@ -722,6 +734,7 @@ export default {
     },
 
     editItem(item) {
+      console.log("Item status:", item.status);
       this.editingItem.IDBook = item.IDBook;
       this.editingItem.BookName = item.BookName;
       this.editingItem.Author = item.Author;
@@ -752,16 +765,17 @@ export default {
       this.editingItem.IDCat = "";
     },
     async saveEditedItem() {
-      if (this.editingItem.status === "free") {
+      console.log("EditingItem status:", this.editingItem.status);
+      if (this.editingItem.status === "Miễn phí") {
         this.editingItem.status = "Miễn phí";
         this.editingItem.PriceBook = 0;
-      } else if (this.editingItem.status === "paid") {
+      } else if (this.editingItem.status === "Mất phí") {
         this.editingItem.status = "Mất phí";
         if (
           isNaN(Number(this.editingItem.PriceBook)) ||
           Number(this.editingItem.PriceBook) <= 20000
         ) {
-          this.showErrorDialog("Vui lòng nhập giá sách hợp lệ.");
+          this.showErrorDialog("Vui lòng nhập giá sách hợp lệ >=20000.");
           return;
         }
       }
@@ -965,12 +979,12 @@ td {
 /* Style cho hộp thoại thêm mới */
 .add-dialog {
   background-color: white; /* Màu trắng cho dialog */
-  max-width: 60%; /* Đặt kích thước tối đa */
-  width: 95%; /* Chiếm toàn bộ chiều rộng của dialog cha */
+  max-width: 100%; /* Đặt kích thước tối đa */
+  width: 100%; /* Chiếm toàn bộ chiều rộng của dialog cha */
 }
 .edit-dialog {
   background-color: white; /* Màu trắng cho dialog */
-  max-width: 80%; /* Đặt kích thước tối đa */
+  max-width: 100%; /* Đặt kích thước tối đa */
   width: 100%; /* Chiếm toàn bộ chiều rộng của dialog cha */
   border-radius: 10px; /* Bo tròn góc */
   overflow: hidden; /* Ẩn phần nằm ngoài dialog */

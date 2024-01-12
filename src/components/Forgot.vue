@@ -12,7 +12,8 @@
       max-width="448"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+      <h1 style="margin-left: 20%">Quên mật khẩu</h1>
+      <div class="text-subtitle-1 text-medium-emphasis">Email or Phone</div>
 
       <v-text-field
         density="compact"
@@ -26,23 +27,24 @@
       <div
         class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
       >
-        Password
+        New Password
 
         <a
           class="text-caption text-decoration-none text-blue"
           rel="noopener noreferrer"
+          href="/"
           target="_blank"
         >
-          Forgot login password?</a
+          login password?</a
         >
       </div>
 
       <v-text-field
         v-model="newPassword"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-        :type="visible ? 'text' : 'password'"
+        :type="visible ? 'text' : 'newPassword'"
         density="compact"
-        placeholder="Enter your password"
+        placeholder="Enter your newPassword"
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="visible = !visible"
@@ -57,7 +59,7 @@
         size="large"
         @click="changePassword"
       >
-        Log In
+        Save
       </v-btn>
     </v-card>
     <v-alert v-if="loginError" type="error">
@@ -93,12 +95,13 @@ export default {
         // Kiểm tra trạng thái của response
         if (response.status === 200) {
           toast.success("Đổi mật khẩu thành công!");
+          this.$router.push("/");
         } else {
-          toast.error("Đổi mật khẩu thất bại. Vui lòng thử lại sau.");
+          toast.error("Đổi mật khẩu thất bại.Kiểm tra lại Email hoặc Phone");
         }
       } catch (error) {
         console.error("Lỗi khi gọi API đổi mật khẩu:", error);
-        toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+        toast.error("Đã xảy ra lỗi. .Kiểm tra lại Email hoặc Phone");
       }
     },
   },

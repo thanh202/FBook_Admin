@@ -3,7 +3,7 @@
     <v-img
       class="mx-auto my-15"
       max-width="228"
-      src="../assets/favicon.ico"
+      src="../assets/logo.gif"
     ></v-img>
 
     <v-card
@@ -29,7 +29,7 @@
 
         <a
           class="text-caption text-decoration-none text-blue"
-          href="#"
+          href="/Forgot"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -104,9 +104,12 @@ export default {
             console.error("Lỗi: Token không được lưu vào localStorage.");
           }
         } else {
-          this.loginError =
-            "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.";
-          console.log("Login failed:", response.data.result);
+          toast.error(
+            "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu."
+          );
+          // this.loginError =
+          //   "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.";
+          // console.log("Login failed:", response.data.result);
         }
       } catch (error) {
         console.error("Error during login:", error.message);

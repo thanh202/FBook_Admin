@@ -1,7 +1,34 @@
 <template>
   <div class="d-flex align-center flex-column pa-6">
     <h1>Quản lý chuong</h1>
-    <v-btn @click="showAddDialog" color="primary">Thêm mới</v-btn>
+    <!-- <div class="d-flex justify-end ma-6" style="padding-left: 90%">
+      <v-btn color="primary" dark @click="exportToExcel">Export Excel</v-btn>
+    </div> -->
+    <div>
+      <v-btn style="margin-bottom: 20px" @click="showAddDialog" color="primary"
+        >Thêm mới</v-btn
+      >
+    </div>
+    <v-col cols="12">
+      <select class="ab" v-model="selectedBook">
+        <option disabled value="">Chọn sách</option>
+        <option v-for="book in books" :key="book.IDBook" :value="book.BookName">
+          {{ book.BookName }}
+        </option>
+      </select>
+      <v-col cols="12">
+        <v-btn
+          style="margin-right: 10x"
+          @click="filterChaptersByBook"
+          color="primary"
+          >Lọc</v-btn
+        >
+        <v-btn style="margin-left: 20px" @click="fetchBookList" color="primary"
+          >Tất cả</v-btn
+        >
+      </v-col>
+    </v-col>
+
     <v-card width="99%">
       <v-table hover>
         <thead>
@@ -170,9 +197,12 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import * as XLSX from "xlsx";
 export default {
   data() {
     return {
+      selectedBook: "",
+      books: [],
       isAddDialogVisible: false,
       itemToDelete: null,
       isDeleteDialogVisible: false,
@@ -239,12 +269,41 @@ export default {
       // Log server response
       this.list = response.data;
       this.originalList = JSON.parse(JSON.stringify(response.data)); // Copy data
+      await this.getBookList();
+      await this.fetchBookList();
     } catch (error) {
       console.error("Lỗi trong quá trình yêu cầu:", error);
       toast.success("Bạn chưa đăng nhập!");
     }
   },
   methods: {
+    exportToExcel() {
+      const data = this.list.result;
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Books");
+      XLSX.writeFile(wb, "book_data.xlsx");
+    },
+    async getBookList() {
+      try {
+        const response = await axios.get("http://localhost:5000/Book/get_list");
+        this.books = response.data.result;
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách sách: ", error);
+      }
+    },
+    async filterChaptersByBook() {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/chuong/search_by_bookname/${encodeURIComponent(
+            this.selectedBook
+          )}`
+        );
+        this.list = response.data;
+      } catch (error) {
+        console.error("Lỗi khi lọc danh sách chuong: ", error);
+      }
+    },
     showDescriptionDialog(description) {
       this.selectedDescription = description;
       this.isDescriptionDialogVisible = true;
@@ -452,5 +511,29 @@ export default {
   margin: 10px;
   text-align: center;
   cursor: pointer;
+}
+.ab {
+  border: 1px solid #666666;
+  padding: 5px;
+  border-radius: 20px;
+}
+.bnt {
+  margin-right: 10px;
+  font-weight: bolder;
+}
+.d-flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.ma-6 {
+  margin: 6px;
 }
 </style>

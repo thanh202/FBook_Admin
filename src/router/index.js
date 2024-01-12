@@ -53,6 +53,10 @@ const routes = [
     path: "/",
     component: () => import("@/components/Login.vue"),
   },
+  {
+    path: "/Forgot",
+    component: () => import("@/components/Forgot.vue"),
+  },
 ];
 
 const router = createRouter({

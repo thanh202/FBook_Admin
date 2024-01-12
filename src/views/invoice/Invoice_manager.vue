@@ -1,7 +1,9 @@
 <template>
   <div class="d-flex align-center flex-column pa-6">
     <h1>Danh sách hóa đơn</h1>
-
+    <div class="d-flex align-center ma-6" style="flex-direction: row-reverse">
+      <v-btn color="primary" dark @click="exportToExcel">Export Excel</v-btn>
+    </div>
     <v-card width="99%">
       <div class="tk">
         <input
@@ -14,10 +16,10 @@
         >
       </div>
       <!-- Biểu mẫu Lọc -->
-      <form @submit.prevent="searill" class="d-flex">
-        <v-row>
+      <form @submit.prevent="searill">
+        <v-row class="align-center">
           <!-- Ô trạng thái là kiểu select -->
-          <v-col cols="12" md="3">
+          <v-col cols="5">
             <v-select
               v-model="searchKeyword"
               :items="statusOptions"
@@ -25,24 +27,20 @@
             ></v-select>
           </v-col>
 
-          <!-- Nút lọc -->
           <v-col cols="1" md="3">
-            <v-btn class="bnt" color="primary" @click="searill(searchKeyword)"
-              >loc</v-btn
+            <v-btn
+              class="bnt ma-0"
+              color="primary"
+              @click="searill(searchKeyword)"
+              >Lọc</v-btn
             >
           </v-col>
 
           <v-col cols="1" md="3">
-            <v-btn class="bnt" color="primary" @click="clear()">Clear</v-btn>
-          </v-col>
-          <div
-            class="d-flex align-center ma-6"
-            style="flex-direction: row-reverse"
-          >
-            <v-btn color="primary" dark @click="exportToExcel"
-              >Export Excel</v-btn
+            <v-btn class="bnt ma-0" color="primary" @click="clear()"
+              >Tất Cả</v-btn
             >
-          </div>
+          </v-col>
         </v-row>
       </form>
       <v-table hover>
@@ -53,10 +51,10 @@
             <th class="text-left">STT</th>
             <th class="text-left">Trạng thái</th>
             <th class="text-left">Giá(VNĐ)</th>
+            <th class="text-left">Đã thanh toán(VNĐ)</th>
             <th class="text-left">Khách hàng</th>
             <th class="text-left">Tên sách</th>
             <th class="text-left">Ngày tạo</th>
-            <th class="text-left">Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -70,12 +68,10 @@
             <td class="text-left">{{ index + 1 }}</td>
             <td class="text-left">{{ item.Status }}</td>
             <td class="text-left">{{ formatCurrency(item.PriceTotal) }}</td>
+            <td class="text-left">{{ formatCurrency(item.PriceTotal) }}</td>
             <td class="text-left">{{ item.UserName }}</td>
             <td class="text-left">{{ item.BookName }}</td>
             <td class="text-left">{{ item.Create_at }}</td>
-            <td>
-              <button>chi tiết</button>
-            </td>
           </tr>
         </tbody>
       </v-table>

@@ -7,7 +7,7 @@
       permanent
       :rail="rail"
       ><v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+        prepend-avatar="/public/favicon.ico"
         title="FBook Admin"
       ></v-list-item>
       <v-divider></v-divider>
@@ -86,7 +86,7 @@
         </router-link>
       </v-list>
 
-      <v-list nav class="text-start">
+      <!-- <v-list nav class="text-start">
         <router-link to="/LICH">
           <v-list-item
             prepend-icon="mdi-calendar-range"
@@ -97,7 +97,7 @@
             >
           </v-list-item>
         </router-link>
-      </v-list>
+      </v-list> -->
       <v-list nav class="text-start">
         <router-link to="/thongke">
           <v-list-item

@@ -1,7 +1,9 @@
 <template>
   <h1 style="font-size: 30px">Quản lý loại sách</h1>
   <div>
-    <v-btn @click="showAddDialog" color="primary">Thêm mới</v-btn>
+    <v-btn @click="showAddDialog" color="primary" style="margin: 20px"
+      >Thêm mới</v-btn
+    >
 
     <v-table class="table1">
       <colgroup>
