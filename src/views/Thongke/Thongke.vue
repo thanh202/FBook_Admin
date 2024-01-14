@@ -108,6 +108,10 @@
                   Giá: {{ book.PriceBook }} VND | Đã bán:
                   {{ book.TotalSold }} quyển
                 </v-list-item-subtitle>
+                <v-list-item
+                  >Tổng tiền:
+                  {{ formatCurrency(book.totalRevenueBook) }} VND</v-list-item
+                >
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -324,7 +328,12 @@ export default {
         const response = await axios.get(
           "http://localhost:5000/bill/get_top_selling_books"
         );
-        this.topSellingBooks = response.data.result.slice(0, 10);
+        this.topSellingBooks = response.data.result
+          .slice(0, 10)
+          .map((book) => ({
+            ...book,
+            totalRevenueBook: book.PriceBook * book.TotalSold,
+          }));
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu top sách bán chạy", error);
       }
