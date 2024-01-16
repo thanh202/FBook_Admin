@@ -42,7 +42,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(chapter, index) in list.result" :key="chapter.IDchuong">
+          <tr
+            v-for="(chapter, index) in displayedItems"
+            :key="chapter.IDchuong"
+          >
             <td class="text-left">{{ index + 1 }}</td>
             <!-- Sử dụng chỉ số để tăng giá trị từ 1 -->
             <td class="text-left">{{ chapter.title }}</td>
@@ -75,7 +78,11 @@
           <v-card-title>
             <h1 style="margin-left: 43%">Chi tiết sách</h1>
           </v-card-title>
-          <v-card-text>{{ selectedDescription }}</v-card-text>
+          <v-card-text>
+            <pre style="font-family: Arial, Helvetica, sans-serif">{{
+              selectedDescription
+            }}</pre>
+          </v-card-text>
           <v-card-actions>
             <v-btn @click="closeDescriptionDialog">Đóng</v-btn>
           </v-card-actions>
@@ -187,7 +194,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </v-card>
   </div>
@@ -209,7 +215,7 @@ export default {
       isDescriptionDialogVisible: false,
       selectedDescription: "",
       page: 1, // Trang hiện tại
-      itemsPerPage: 30, // Số lượng mục trên mỗi trang
+      itemsPerPage: 10, // Số lượng mục trên mỗi trang
       list: { result: [] },
       newChapter: {
         title: "",
@@ -242,7 +248,11 @@ export default {
     pageCount() {
       return Math.ceil(this.list.result.length / this.itemsPerPage);
     },
+    displayedItems() {
+      return this.list.result.slice(this.startIndex, this.endIndex + 1);
+    },
   },
+
   async mounted() {
     try {
       axios.interceptors.request.use(
@@ -290,6 +300,7 @@ export default {
         this.books = response.data.result;
       } catch (error) {
         console.error("Lỗi khi lấy danh sách sách: ", error);
+        toast.success("Bạn chưa đăng nhập!");
       }
     },
     async filterChaptersByBook() {
@@ -388,7 +399,7 @@ export default {
 
         // Thêm sau khi thêm mới sách thành công
         if (response.status === 200) {
-          toast.success("Thêm sách thành công!");
+          toast.success("Thêm Chương thành công!");
           // Đóng hộp thoại Thêm mới sách và cập nhật danh sách sách local
           this.isAddDialogVisible = false;
           this.newChapter.title = "";
@@ -491,6 +502,7 @@ export default {
         });
       } catch (error) {
         console.error("Lỗi khi lấy danh sách chuong: ", error);
+        toast.success("Bạn chưa đăng nhập!");
       }
     },
   },

@@ -23,6 +23,7 @@
         <div>
           <canvas id="salesChart"></canvas>
         </div>
+
         <h2 style="margin-top: 50px">Thống kê doanh thu theo Ngày</h2>
 
         <v-row justify="center">
@@ -178,6 +179,9 @@ export default {
   mounted() {
     this.getDataFromAPI();
     this.getTopSellingBooks();
+    setTimeout(() => {
+      this.drawChart();
+    }, 100);
   },
   watch: {
     currentYear() {
@@ -191,47 +195,55 @@ export default {
           this.chart.destroy();
         }
 
-        const ctx = this.$refs.myChart.getContext("2d");
-        this.chart = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: ["Tổng Doanh thu và số lượng "],
-            datasets: [
-              {
-                label: "Doanh thu",
-                data: [
-                  this.statistics.total.total,
-                  this.statistics.total.totalOrders,
-                  this.statistics.total.totalOrders, // Thêm vào đây
+        const canvas = this.$refs.myChart;
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            this.chart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["Tổng Doanh thu và số lượng "],
+                datasets: [
+                  {
+                    label: "Doanh thu",
+                    data: [
+                      this.statistics.total.total,
+                      this.statistics.total.totalOrders,
+                    ],
+                    backgroundColor: ["blue", "green"], // Thêm màu
+                    yAxisID: "y-axis-0",
+                  },
+                  {
+                    label: "Số lượng",
+                    data: [this.statistics.total.totalOrders],
+                    backgroundColor: "red",
+                    yAxisID: "y-axis-1",
+                  },
                 ],
-                backgroundColor: ["blue", "green", "orange"], // Thêm màu
-                yAxisID: "y-axis-0",
               },
-              {
-                label: "Số lượng",
-                data: [this.statistics.total.totalOrders],
-                backgroundColor: "red",
-                yAxisID: "y-axis-1",
+              options: {
+                scales: {
+                  y: [
+                    {
+                      id: "y-axis-0",
+                      type: "linear",
+                      position: "left",
+                    },
+                    {
+                      id: "y-axis-1",
+                      type: "linear",
+                      position: "right",
+                    },
+                  ],
+                },
               },
-            ],
-          },
-          options: {
-            scales: {
-              y: [
-                {
-                  id: "y-axis-0",
-                  type: "linear",
-                  position: "left",
-                },
-                {
-                  id: "y-axis-1",
-                  type: "linear",
-                  position: "right",
-                },
-              ],
-            },
-          },
-        });
+            });
+          } else {
+            console.error("Ngữ cảnh của Canvas là null");
+          }
+        } else {
+          console.error("Phần tử Canvas là null");
+        }
       }
     },
 
@@ -391,14 +403,29 @@ export default {
       }
     },
     renderChart() {
-      const ctx = document.getElementById("salesChart").getContext("2d");
+      const canvas = document.getElementById("salesChart");
 
+      // Kiểm tra xem phần tử canvas có tồn tại không
+      if (!canvas) {
+        console.error("Phần tử Canvas không tồn tại");
+        return;
+      }
+
+      // Kiểm tra xem ngữ cảnh của Canvas có tồn tại không
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.error("Ngữ cảnh của Canvas không tồn tại");
+        return;
+      }
+
+      // Kiểm tra xem biểu đồ đã tồn tại chưa, nếu có thì hủy để vẽ lại
       if (this.salesChart) {
         this.salesChart.destroy();
       }
 
+      // Tạo biểu đồ mới
       this.salesChart = new Chart(ctx, {
-        type: "bar", // Thay đổi loại biểu đồ thành bar để hiển thị cột
+        type: "bar",
         data: this.salesData,
         options: {
           scales: {
