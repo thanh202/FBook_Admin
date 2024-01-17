@@ -38,7 +38,7 @@
                 <th class="text-left">Ảnh</th>
                 <th class="text-left">Sao TB</th>
                 <th class="text-left">Ngày tạo</th>
-                <th class="text-left">Chương</th>
+                <th class="text-left">Tổng chương</th>
                 <th class="text-left">Loại</th>
                 <th class="text-left">Thao tác</th>
               </tr>
@@ -102,7 +102,7 @@
     <v-dialog v-model="isDescriptionDialogVisible" class="description-dialog">
       <v-card class="cart" style="height: 30vh">
         <v-card-title>
-          <h1 style="margin: 0">Chi tiết sách</h1>
+          <h1 style="margin: 0">Mô tả</h1>
         </v-card-title>
         <v-card-text>{{ selectedDescription }}</v-card-text>
         <v-card-actions>
@@ -764,6 +764,7 @@ export default {
       this.editingItem.Chapter = "";
       this.editingItem.IDCat = "";
     },
+
     async saveEditedItem() {
       console.log("EditingItem status:", this.editingItem.status);
       if (this.editingItem.status === "Miễn phí") {
@@ -856,19 +857,18 @@ export default {
           updatedData
         );
 
-        toast.success("Sửa sách thành công!");
         // Cập nhật sau khi sửa sách thành công
         if (response.status === 200) {
           // Đóng hộp thoại Sửa sách
 
-          toast.success("Sửa sách thành công!");
           this.isEditDialogVisible = false;
-
+          toast.success("Sửa sách thành công!");
           // Gọi lại hàm để lấy danh sách sách mới sau khi sửa sách
 
           const index = this.list.result.findIndex(
             (item) => item.IDBook === this.editingItem.IDBook
           );
+          toast.success("Sửa sách thành công!");
 
           if (
             response.status === 200 &&

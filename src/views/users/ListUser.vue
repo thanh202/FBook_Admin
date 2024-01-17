@@ -13,7 +13,7 @@
         <tr>
           <th class="text-left a">STT</th>
           <th class="text-left b">UserName</th>
-          <th class="text-left">Ảnh</th>
+
           <th class="text-left d">Email</th>
           <th class="text-left e">Birthday</th>
           <th class="text-left f">Phone</th>
@@ -24,14 +24,14 @@
           <td>{{ index + 1 }}</td>
           <td>{{ user.UserName }}</td>
 
-          <td @click="console.log(user.image)">
+          <!-- <td @click="console.log(user.image)">
             <v-img
               style="width: 6vh"
               :src="'http://localhost:5000/' + user.img"
               alt="Hình ảnh user"
               id="imgs"
             ></v-img>
-          </td>
+          </td> -->
 
           <td>{{ user.Email }}</td>
           <td>{{ user.Birthday }}</td>

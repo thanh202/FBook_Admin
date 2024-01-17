@@ -76,7 +76,7 @@
       <v-dialog v-model="isDescriptionDialogVisible" class="description-dialog">
         <v-card class="cart" style="height: 140vh">
           <v-card-title>
-            <h1 style="margin-left: 43%">Chi tiết sách</h1>
+            <h1 style="margin-left: 43%">Chi tiết chương</h1>
           </v-card-title>
           <v-card-text>
             <pre style="font-family: Arial, Helvetica, sans-serif">{{
@@ -300,7 +300,7 @@ export default {
         this.books = response.data.result;
       } catch (error) {
         console.error("Lỗi khi lấy danh sách sách: ", error);
-        toast.success("Bạn chưa đăng nhập!");
+        // toast.success("Bạn chưa đăng nhập!");
       }
     },
     async filterChaptersByBook() {
@@ -383,6 +383,28 @@ export default {
     },
     async addNewchuong() {
       try {
+        if (
+          !this.newChapter.title ||
+          !this.newChapter.content ||
+          !this.newChapter.IDBook ||
+          !this.newChapter.chuongso
+        ) {
+          toast.error("Vui lòng điền đầy đủ thông tin");
+          return;
+        }
+
+        // Kiểm tra chiều dài của nội dung (content)
+        if (this.newChapter.content.length <= 400) {
+          toast.error("Nội dung phải có hơn 1000 kí tự");
+          return;
+        }
+
+        // Kiểm tra chươngso là số
+        const chuongso = parseInt(this.newChapter.chuongso);
+        if (isNaN(chuongso)) {
+          toast.error("Chương số phải là một số");
+          return;
+        }
         const newData = {
           title: this.newChapter.title,
           content: this.newChapter.content,
@@ -445,6 +467,28 @@ export default {
     },
     async saveEditedItem() {
       try {
+        if (
+          !this.editingItem.title ||
+          !this.editingItem.content ||
+          !this.editingItem.IDBook ||
+          !this.editingItem.chuongso
+        ) {
+          toast.error("Vui lòng điền đầy đủ thông tin");
+          return;
+        }
+
+        // Kiểm tra chiều dài của nội dung (content)
+        if (this.editingItem.content.length <= 400) {
+          toast.error("Nội dung phải có hơn 1000 kí tự");
+          return;
+        }
+
+        // Kiểm tra chươngso là số
+        const chuongso = parseInt(this.editingItem.chuongso);
+        if (isNaN(chuongso)) {
+          toast.error("Chương số phải là một số");
+          return;
+        }
         const updatedData = {
           IDchuong: this.editingItem.IDchuong,
           title: this.editingItem.title,
@@ -502,7 +546,6 @@ export default {
         });
       } catch (error) {
         console.error("Lỗi khi lấy danh sách chuong: ", error);
-        toast.success("Bạn chưa đăng nhập!");
       }
     },
   },
